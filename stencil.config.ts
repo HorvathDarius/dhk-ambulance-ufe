@@ -1,7 +1,7 @@
 import { Config } from '@stencil/core';
 
 export const config: Config = {
-  namespace: 'dhk-ambulance-ufe',
+  namespace: 'ambulance-ufe',
   outputTargets: [
     {
       type: 'dist',
@@ -20,4 +20,7 @@ export const config: Config = {
       serviceWorker: null, // disable service workers
     },
   ],
+  testing: {
+    browserHeadless: "shell",
+  },
 };

@@ -1,5 +1,5 @@
 {
-  "name": "dhk-ambulance-ufe",
+  "name": "dkh-ambulance-ufe",
   "version": "0.0.1",
   "description": "Stencil Component Starter",
   "main": "dist/index.cjs.js",
@@ -7,11 +7,11 @@
   "types": "dist/types/index.d.ts",
   "collection": "dist/collection/collection-manifest.json",
   "collection:main": "dist/collection/index.js",
-  "unpkg": "dist/dhk-ambulance-ufe/dhk-ambulance-ufe.esm.js",
+  "unpkg": "dist/dkh-ambulance-ufe/dkh-ambulance-ufe.esm.js",
   "exports": {
     ".": {
-      "import": "./dist/dhk-ambulance-ufe/dhk-ambulance-ufe.esm.js",
-      "require": "./dist/dhk-ambulance-ufe/dhk-ambulance-ufe.cjs.js"
+      "import": "./dist/dkh-ambulance-ufe/dkh-ambulance-ufe.esm.js",
+      "require": "./dist/dkh-ambulance-ufe/dkh-ambulance-ufe.cjs.js"
     },
     "./my-component": {
       "import": "./dist/components/my-component.js",
@@ -34,20 +34,17 @@
   "scripts": {
     "build": "stencil build",
     "start": "stencil build --dev --watch --serve",
-    "test": "stencil-test --prod",
-    "test:watch": "stencil-test --prod --watch",
+    "test": "stencil test --spec --e2e",
+    "test.watch": "stencil test --spec --e2e --watchAll",
     "generate": "stencil generate"
   },
   "devDependencies": {
-    "@stencil/core": "^4.27.1 || ^5.0.0-0",
-    "@stencil/vitest": "^1.8.3",
+    "@stencil/core": "^4.27.1",
+    "@types/jest": "^29.5.14",
     "@types/node": "^22.13.5",
-    "@vitest/browser-playwright": "^4.0.0",
-    "playwright": "^1.52.0",
-    "vitest": "^4.0.0"
+    "jest": "^29.7.0",
+    "jest-cli": "^29.7.0",
+    "puppeteer": "^24.3.0"
   },
-  "license": "MIT",
-  "dependencies": {
-    "@material/web": "^2.4.1"
-  }
+  "license": "MIT"
 }
