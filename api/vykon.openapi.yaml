@@ -1,0 +1,239 @@
+openapi: 3.0.0
+servers:
+  - description: Cluster Endpoint
+    url: /api
+info:
+  description: Performance records of hospital staff (worked hours, examinations, operations, on-call shifts) for the Web-In-Cloud system
+  version: "1.0.0"
+  title: Performance Records API
+tags:
+  - name: performanceRecords
+    description: API for managing employee performance records (worked hours, examinations, operations, on-call shifts)
+
+paths:
+  /performance-records:
+    get:
+      tags:
+        - performanceRecords
+      summary: List performance records
+      description: Returns all performance records, optionally filtered by date range or employee.
+      operationId: listPerformanceRecords
+      parameters:
+        - in: query
+          name: employeeId
+          description: Filter by employee identifier
+          schema:
+            type: string
+        - in: query
+          name: from
+          description: Include records on or after this date (ISO 8601, yyyy-MM-dd)
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: to
+          description: Include records on or before this date (ISO 8601, yyyy-MM-dd)
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Array of performance records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PerformanceRecord"
+              examples:
+                response:
+                  $ref: "#/components/examples/PerformanceRecordListExample"
+    post:
+      tags:
+        - performanceRecords
+      summary: Create a new performance record
+      operationId: createPerformanceRecord
+      requestBody:
+        required: true
+        description: Performance record to create. The `id` field is assigned by the server and ignored if provided.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PerformanceRecord"
+            examples:
+              request:
+                $ref: "#/components/examples/PerformanceRecordExample"
+      responses:
+        "201":
+          description: Created record (with assigned id)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PerformanceRecord"
+        "400":
+          description: Invalid request body
+        "409":
+          description: Record with this id already exists
+
+  /performance-records/{recordId}:
+    get:
+      tags:
+        - performanceRecords
+      summary: Get a single performance record by id
+      operationId: getPerformanceRecord
+      parameters:
+        - $ref: "#/components/parameters/RecordId"
+      responses:
+        "200":
+          description: The requested record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PerformanceRecord"
+              examples:
+                response:
+                  $ref: "#/components/examples/PerformanceRecordExample"
+        "404":
+          description: Record not found
+    put:
+      tags:
+        - performanceRecords
+      summary: Update an existing performance record
+      operationId: updatePerformanceRecord
+      parameters:
+        - $ref: "#/components/parameters/RecordId"
+      requestBody:
+        required: true
+        description: Updated record. Path `recordId` takes precedence over any `id` in the body.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PerformanceRecord"
+            examples:
+              request:
+                $ref: "#/components/examples/PerformanceRecordExample"
+      responses:
+        "200":
+          description: Updated record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PerformanceRecord"
+        "400":
+          description: Invalid request body
+        "404":
+          description: Record not found
+    delete:
+      tags:
+        - performanceRecords
+      summary: Delete (archive) a performance record
+      operationId: deletePerformanceRecord
+      parameters:
+        - $ref: "#/components/parameters/RecordId"
+      responses:
+        "204":
+          description: Record deleted
+        "404":
+          description: Record not found
+
+components:
+  parameters:
+    RecordId:
+      in: path
+      name: recordId
+      required: true
+      description: Unique identifier of the performance record
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+
+  schemas:
+    PerformanceRecord:
+      type: object
+      required:
+        - employeeName
+        - date
+        - hoursWorked
+        - examinationCount
+        - operationCount
+        - shiftCount
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Server-assigned unique identifier
+          example: 1
+          readOnly: true
+        employeeId:
+          type: string
+          description: Employee identifier (badge or HR id)
+          example: EMP-001
+        employeeName:
+          type: string
+          description: Full name of the employee
+          example: MUDr. Jana Nováková
+        date:
+          type: string
+          format: date
+          description: Date the work was performed (ISO 8601)
+          example: "2026-04-28"
+        hoursWorked:
+          type: number
+          format: float
+          minimum: 0
+          description: Hours worked on this date
+          example: 8
+        examinationCount:
+          type: integer
+          minimum: 0
+          description: Number of examinations performed
+          example: 12
+        operationCount:
+          type: integer
+          minimum: 0
+          description: Number of operations performed
+          example: 1
+        shiftCount:
+          type: integer
+          minimum: 0
+          description: Number of on-call shifts
+          example: 0
+        note:
+          type: string
+          description: Optional free-text note
+          example: Bežná ambulantná zmena
+
+  examples:
+    PerformanceRecordExample:
+      summary: A single performance record
+      value:
+        id: 1
+        employeeId: EMP-001
+        employeeName: MUDr. Jana Nováková
+        date: "2026-04-28"
+        hoursWorked: 8
+        examinationCount: 12
+        operationCount: 1
+        shiftCount: 0
+        note: Bežná ambulantná zmena
+    PerformanceRecordListExample:
+      summary: Multiple performance records
+      value:
+        - id: 1
+          employeeId: EMP-001
+          employeeName: MUDr. Jana Nováková
+          date: "2026-04-28"
+          hoursWorked: 8
+          examinationCount: 12
+          operationCount: 1
+          shiftCount: 0
+          note: Bežná ambulantná zmena
+        - id: 2
+          employeeId: EMP-002
+          employeeName: MUDr. Peter Kováč
+          date: "2026-04-29"
+          hoursWorked: 12
+          examinationCount: 4
+          operationCount: 3
+          shiftCount: 1

@@ -1,5 +1,5 @@
-import { Component, Event, EventEmitter, Fragment, Host, State, h } from '@stencil/core';
-import { MOCK_VYKONY, VykonZaznam } from '../../api/evidencia-vykonov';
+import { Component, Event, EventEmitter, Fragment, Host, Prop, State, h } from '@stencil/core';
+import { Configuration, PerformanceRecord, PerformanceRecordsApi } from '../../api/vykon';
 
 @Component({
   tag: 'vykon-list',
@@ -7,18 +7,51 @@ import { MOCK_VYKONY, VykonZaznam } from '../../api/evidencia-vykonov';
   shadow: true,
 })
 export class VykonList {
-  @State() records: VykonZaznam[] = [...MOCK_VYKONY];
+  @Prop() apiBase: string = '';
+
+  @State() records: PerformanceRecord[] = [];
+  @State() loading: boolean = false;
+  @State() errorMessage: string = '';
 
   @Event({ eventName: 'entry-clicked' }) entryClicked: EventEmitter<string>;
 
-  private handleDelete(id: number) {
-    this.records = this.records.filter(r => r.id !== id);
+  private api(): PerformanceRecordsApi {
+    return new PerformanceRecordsApi(new Configuration({
+      basePath: this.apiBase || undefined,
+    }));
   }
 
-  private formatDatum(iso: string): string {
-    const d = new Date(iso);
-    if (isNaN(d.getTime())) return iso;
-    return d.toLocaleDateString('sk-SK');
+  async componentWillLoad() {
+    await this.loadRecords();
+  }
+
+  private async loadRecords() {
+    this.loading = true;
+    this.errorMessage = '';
+    try {
+      this.records = await this.api().listPerformanceRecords({});
+    } catch (e: any) {
+      this.errorMessage = e?.message ?? 'Nepodarilo sa načítať záznamy.';
+      this.records = [];
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  private async handleDelete(id: number) {
+    try {
+      await this.api().deletePerformanceRecord({ recordId: id });
+      this.records = this.records.filter(r => r.id !== id);
+    } catch (e: any) {
+      this.errorMessage = e?.message ?? 'Nepodarilo sa vymazať záznam.';
+    }
+  }
+
+  private formatDate(d: Date | string | undefined): string {
+    if (!d) return '';
+    const date = d instanceof Date ? d : new Date(d);
+    if (isNaN(date.getTime())) return String(d);
+    return date.toLocaleDateString('sk-SK');
   }
 
   render() {
@@ -35,30 +68,34 @@ export class VykonList {
           </md-fab>
         </header>
 
-        {this.records.length === 0 ? (
+        {this.errorMessage ? <div class="error">{this.errorMessage}</div> : null}
+
+        {this.loading ? (
+          <div class="empty">Načítavam…</div>
+        ) : this.records.length === 0 ? (
           <div class="empty">Žiadne záznamy</div>
         ) : (
           <md-list>
             {this.records.map((rec, idx) => (
               <Fragment>
                 <md-list-item key={rec.id}>
-                  <div slot="headline">{rec.zamestnanecMeno}</div>
+                  <div slot="headline">{rec.employeeName}</div>
                   <div slot="supporting-text">
-                    {this.formatDatum(rec.datum)} · {rec.odpracovaneHodiny} h ·
-                    {' '}vyšetrenia: {rec.pocetVysetreni} ·
-                    {' '}operácie: {rec.pocetOperacii} ·
-                    {' '}služby: {rec.pocetSluzieb}
+                    {this.formatDate(rec.date)} · {rec.hoursWorked} h ·
+                    {' '}vyšetrenia: {rec.examinationCount} ·
+                    {' '}operácie: {rec.operationCount} ·
+                    {' '}služby: {rec.shiftCount}
                   </div>
                   <div slot="end" class="actions">
                     <md-icon-button
                       aria-label="Upraviť záznam"
-                      onClick={() => this.entryClicked.emit(rec.id.toString())}
+                      onClick={() => this.entryClicked.emit(String(rec.id))}
                     >
                       <md-icon>edit</md-icon>
                     </md-icon-button>
                     <md-icon-button
                       aria-label="Vymazať záznam"
-                      onClick={() => this.handleDelete(rec.id)}
+                      onClick={() => this.handleDelete(rec.id!)}
                     >
                       <md-icon>delete</md-icon>
                     </md-icon-button>

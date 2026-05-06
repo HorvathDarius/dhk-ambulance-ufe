@@ -11,6 +11,7 @@ declare global {
 })
 export class VykonApp {
   @Prop() basePath: string = '';
+  @Prop() apiBase: string = '';
 
   @State() private relativePath = '';
 
@@ -48,10 +49,12 @@ export class VykonApp {
         {element === 'editor' ? (
           <vykon-editor
             entry-id={entryId}
+            api-base={this.apiBase}
             oneditor-closed={() => navigate('./list')}
           ></vykon-editor>
         ) : (
           <vykon-list
+            api-base={this.apiBase}
             onentry-clicked={(ev: CustomEvent<string>) => navigate('./editor/' + ev.detail)}
           ></vykon-list>
         )}
