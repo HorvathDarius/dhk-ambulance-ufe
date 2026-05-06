@@ -11,13 +11,13 @@ describe('vykon-editor', () => {
     expect(title.textContent).toContain('Nový');
   });
 
-  it('renders all expected button types', async () => {
+  it('renders cancel and save buttons in create mode', async () => {
     const page = await newSpecPage({
       components: [VykonEditor],
-      html: `<vykon-editor entry-id="1"></vykon-editor>`,
+      html: `<vykon-editor entry-id="@new"></vykon-editor>`,
     });
     expect(page.root.shadowRoot.querySelectorAll('md-filled-button').length).toEqual(1);
     expect(page.root.shadowRoot.querySelectorAll('md-outlined-button').length).toEqual(1);
-    expect(page.root.shadowRoot.querySelectorAll('md-filled-tonal-button').length).toEqual(1);
+    expect(page.root.shadowRoot.querySelectorAll('md-filled-tonal-button').length).toEqual(0);
   });
 });

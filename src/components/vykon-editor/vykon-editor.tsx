@@ -1,5 +1,5 @@
 import { Component, Event, EventEmitter, Host, Prop, State, Watch, h } from '@stencil/core';
-import { MOCK_VYKONY, VykonZaznam, nextId } from '../../api/evidencia-vykonov';
+import { Configuration, EvidenciaVykonovApi, VykonZaznam } from '../../api/vykon';
 
 interface FormState {
   zamestnanecId: string;
@@ -23,6 +23,19 @@ const emptyForm = (): FormState => ({
   poznamka: '',
 });
 
+const recordToForm = (rec: VykonZaznam): FormState => ({
+  zamestnanecId: rec.zamestnanecId ?? '',
+  zamestnanecMeno: rec.zamestnanecMeno ?? '',
+  datum: rec.datum instanceof Date && !isNaN(rec.datum.getTime())
+    ? rec.datum.toISOString().substring(0, 10)
+    : '',
+  odpracovaneHodiny: String(rec.odpracovaneHodiny ?? ''),
+  pocetVysetreni: String(rec.pocetVysetreni ?? 0),
+  pocetOperacii: String(rec.pocetOperacii ?? 0),
+  pocetSluzieb: String(rec.pocetSluzieb ?? 0),
+  poznamka: rec.poznamka ?? '',
+});
+
 @Component({
   tag: 'vykon-editor',
   styleUrl: 'vykon-editor.css',
@@ -30,44 +43,54 @@ const emptyForm = (): FormState => ({
 })
 export class VykonEditor {
   @Prop() entryId: string;
+  @Prop() apiBase: string = '';
 
   @State() form: FormState = emptyForm();
   @State() touched: Partial<Record<keyof FormState, boolean>> = {};
+  @State() loadedId: number | undefined;
+  @State() errorMessage: string = '';
+  @State() saving: boolean = false;
 
   @Event({ eventName: 'editor-closed' }) editorClosed: EventEmitter<string>;
 
-  componentWillLoad() {
-    this.syncFromEntryId(this.entryId);
+  private api(): EvidenciaVykonovApi {
+    return new EvidenciaVykonovApi(new Configuration({
+      basePath: this.apiBase || undefined,
+    }));
+  }
+
+  async componentWillLoad() {
+    await this.loadFromEntryId(this.entryId);
   }
 
   @Watch('entryId')
-  onEntryIdChanged(newVal: string) {
-    this.syncFromEntryId(newVal);
+  async onEntryIdChanged(newVal: string) {
+    await this.loadFromEntryId(newVal);
   }
 
-  private lookupRecord(id: string): VykonZaznam | undefined {
-    if (!id || id === '@new') return undefined;
+  private async loadFromEntryId(id: string) {
+    this.errorMessage = '';
+    this.touched = {};
+    if (!id || id === '@new') {
+      this.loadedId = undefined;
+      this.form = emptyForm();
+      return;
+    }
     const numeric = Number(id);
-    return MOCK_VYKONY.find(r => r.id === numeric);
-  }
-
-  private syncFromEntryId(id: string) {
-    const rec = this.lookupRecord(id);
-    if (rec) {
-      this.form = {
-        zamestnanecId: rec.zamestnanecId ?? '',
-        zamestnanecMeno: rec.zamestnanecMeno ?? '',
-        datum: rec.datum ?? '',
-        odpracovaneHodiny: String(rec.odpracovaneHodiny ?? ''),
-        pocetVysetreni: String(rec.pocetVysetreni ?? 0),
-        pocetOperacii: String(rec.pocetOperacii ?? 0),
-        pocetSluzieb: String(rec.pocetSluzieb ?? 0),
-        poznamka: rec.poznamka ?? '',
-      };
-    } else {
+    if (isNaN(numeric)) {
+      this.loadedId = undefined;
+      this.form = emptyForm();
+      return;
+    }
+    try {
+      const rec = await this.api().getVykon({ vykonId: numeric });
+      this.loadedId = rec.id ?? numeric;
+      this.form = recordToForm(rec);
+    } catch (e: any) {
+      this.errorMessage = e?.message ?? 'Nepodarilo sa načítať záznam.';
+      this.loadedId = undefined;
       this.form = emptyForm();
     }
-    this.touched = {};
   }
 
   private update<K extends keyof FormState>(key: K, value: FormState[K]) {
@@ -76,7 +99,7 @@ export class VykonEditor {
   }
 
   private isEditMode(): boolean {
-    return !!this.lookupRecord(this.entryId);
+    return this.loadedId !== undefined;
   }
 
   private fieldErrors(): Partial<Record<keyof FormState, string>> {
@@ -105,7 +128,20 @@ export class VykonEditor {
     return Object.keys(this.fieldErrors()).length === 0;
   }
 
-  private handleStore = () => {
+  private buildPayload(): VykonZaznam {
+    return {
+      zamestnanecId: this.form.zamestnanecId.trim() || undefined,
+      zamestnanecMeno: this.form.zamestnanecMeno.trim(),
+      datum: new Date(this.form.datum),
+      odpracovaneHodiny: Number(this.form.odpracovaneHodiny),
+      pocetVysetreni: Number(this.form.pocetVysetreni),
+      pocetOperacii: Number(this.form.pocetOperacii),
+      pocetSluzieb: Number(this.form.pocetSluzieb),
+      poznamka: this.form.poznamka.trim() || undefined,
+    };
+  }
+
+  private handleStore = async () => {
     if (!this.isValid()) {
       const all: (keyof FormState)[] = [
         'zamestnanecId', 'zamestnanecMeno', 'datum', 'odpracovaneHodiny',
@@ -116,24 +152,32 @@ export class VykonEditor {
       this.touched = t;
       return;
     }
-    const existing = this.lookupRecord(this.entryId);
-    const payload: VykonZaznam = {
-      id: existing?.id ?? nextId(),
-      zamestnanecId: this.form.zamestnanecId.trim(),
-      zamestnanecMeno: this.form.zamestnanecMeno.trim(),
-      datum: this.form.datum,
-      odpracovaneHodiny: Number(this.form.odpracovaneHodiny),
-      pocetVysetreni: Number(this.form.pocetVysetreni),
-      pocetOperacii: Number(this.form.pocetOperacii),
-      pocetSluzieb: Number(this.form.pocetSluzieb),
-      poznamka: this.form.poznamka.trim() || undefined,
-    };
-    if (existing) {
-      Object.assign(existing, payload);
-    } else {
-      MOCK_VYKONY.push(payload);
+    this.saving = true;
+    this.errorMessage = '';
+    try {
+      const payload = this.buildPayload();
+      if (this.loadedId !== undefined) {
+        await this.api().updateVykon({ vykonId: this.loadedId, vykonZaznam: payload });
+      } else {
+        await this.api().createVykon({ vykonZaznam: payload });
+      }
+      this.editorClosed.emit('store');
+    } catch (e: any) {
+      this.errorMessage = e?.message ?? 'Nepodarilo sa uložiť záznam.';
+    } finally {
+      this.saving = false;
     }
-    this.editorClosed.emit('store');
+  };
+
+  private handleDelete = async () => {
+    if (this.loadedId === undefined) return;
+    this.errorMessage = '';
+    try {
+      await this.api().deleteVykon({ vykonId: this.loadedId });
+      this.editorClosed.emit('delete');
+    } catch (e: any) {
+      this.errorMessage = e?.message ?? 'Nepodarilo sa vymazať záznam.';
+    }
   };
 
   private inputHandler<K extends keyof FormState>(key: K) {
@@ -152,6 +196,8 @@ export class VykonEditor {
     return (
       <Host>
         <h2 class="title">{editMode ? 'Upraviť výkon' : 'Nový výkon'}</h2>
+
+        {this.errorMessage ? <div class="error">{this.errorMessage}</div> : null}
 
         <div class="grid">
           <md-outlined-text-field
@@ -230,7 +276,7 @@ export class VykonEditor {
 
         <div class="actions">
           {editMode ? (
-            <md-filled-tonal-button onClick={() => this.editorClosed.emit('delete')}>
+            <md-filled-tonal-button onClick={this.handleDelete}>
               <md-icon slot="icon">delete</md-icon>
               Zmazať
             </md-filled-tonal-button>
@@ -239,7 +285,7 @@ export class VykonEditor {
           <md-outlined-button onClick={() => this.editorClosed.emit('cancel')}>
             Zrušiť
           </md-outlined-button>
-          <md-filled-button disabled={!valid} onClick={this.handleStore}>
+          <md-filled-button disabled={!valid || this.saving} onClick={this.handleStore}>
             <md-icon slot="icon">save</md-icon>
             Uložiť
           </md-filled-button>

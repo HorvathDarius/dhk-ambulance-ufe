@@ -12,12 +12,24 @@ export namespace Components {
         /**
           * @default ''
          */
+        "apiBase": string;
+        /**
+          * @default ''
+         */
         "basePath": string;
     }
     interface VykonEditor {
+        /**
+          * @default ''
+         */
+        "apiBase": string;
         "entryId": string;
     }
     interface VykonList {
+        /**
+          * @default ''
+         */
+        "apiBase": string;
     }
 }
 export interface VykonEditorCustomEvent<T> extends CustomEvent<T> {
@@ -89,28 +101,45 @@ declare namespace LocalJSX {
         /**
           * @default ''
          */
+        "apiBase"?: string;
+        /**
+          * @default ''
+         */
         "basePath"?: string;
     }
     interface VykonEditor {
+        /**
+          * @default ''
+         */
+        "apiBase"?: string;
         "entryId"?: string;
         "onEditor-closed"?: (event: VykonEditorCustomEvent<string>) => void;
     }
     interface VykonList {
+        /**
+          * @default ''
+         */
+        "apiBase"?: string;
         "onEntry-clicked"?: (event: VykonListCustomEvent<string>) => void;
     }
 
     interface VykonAppAttributes {
         "basePath": string;
+        "apiBase": string;
     }
     interface VykonEditorAttributes {
         "entryId": string;
+        "apiBase": string;
+    }
+    interface VykonListAttributes {
+        "apiBase": string;
     }
 
     interface IntrinsicElements {
         "main-component": MainComponent;
         "vykon-app": Omit<VykonApp, keyof VykonAppAttributes> & { [K in keyof VykonApp & keyof VykonAppAttributes]?: VykonApp[K] } & { [K in keyof VykonApp & keyof VykonAppAttributes as `attr:${K}`]?: VykonAppAttributes[K] } & { [K in keyof VykonApp & keyof VykonAppAttributes as `prop:${K}`]?: VykonApp[K] };
         "vykon-editor": Omit<VykonEditor, keyof VykonEditorAttributes> & { [K in keyof VykonEditor & keyof VykonEditorAttributes]?: VykonEditor[K] } & { [K in keyof VykonEditor & keyof VykonEditorAttributes as `attr:${K}`]?: VykonEditorAttributes[K] } & { [K in keyof VykonEditor & keyof VykonEditorAttributes as `prop:${K}`]?: VykonEditor[K] };
-        "vykon-list": VykonList;
+        "vykon-list": Omit<VykonList, keyof VykonListAttributes> & { [K in keyof VykonList & keyof VykonListAttributes]?: VykonList[K] } & { [K in keyof VykonList & keyof VykonListAttributes as `attr:${K}`]?: VykonListAttributes[K] } & { [K in keyof VykonList & keyof VykonListAttributes as `prop:${K}`]?: VykonList[K] };
     }
 }
 export { LocalJSX as JSX };

@@ -11,6 +11,15 @@
   font-weight: 500;
 }
 
+.error {
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  background: #ffebee;
+  color: #b00020;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
