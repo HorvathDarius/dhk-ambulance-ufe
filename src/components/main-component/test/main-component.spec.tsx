@@ -7,12 +7,8 @@ describe('main-component', () => {
       components: [MainComponent],
       html: `<main-component></main-component>`,
     });
-    expect(page.root).toEqualHtml(`
-      <main-component>
-        <mock:shadow-root>
-          <h1>DHK AMBULANCE UFE</h1>
-        </mock:shadow-root>
-      </main-component>
-    `);
+    const heading = page.root.shadowRoot.querySelector('h1');
+    expect(heading.textContent).toBe('DHK AMBULANCE UFE');
+    expect(page.root.shadowRoot.querySelector('vykon-app')).toBeTruthy();
   });
 });

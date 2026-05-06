@@ -8,6 +8,25 @@ import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 export namespace Components {
     interface MainComponent {
     }
+    interface VykonApp {
+        /**
+          * @default ''
+         */
+        "basePath": string;
+    }
+    interface VykonEditor {
+        "entryId": string;
+    }
+    interface VykonList {
+    }
+}
+export interface VykonEditorCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLVykonEditorElement;
+}
+export interface VykonListCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLVykonListElement;
 }
 declare global {
     interface HTMLMainComponentElement extends Components.MainComponent, HTMLStencilElement {
@@ -16,15 +35,82 @@ declare global {
         prototype: HTMLMainComponentElement;
         new (): HTMLMainComponentElement;
     };
+    interface HTMLVykonAppElement extends Components.VykonApp, HTMLStencilElement {
+    }
+    var HTMLVykonAppElement: {
+        prototype: HTMLVykonAppElement;
+        new (): HTMLVykonAppElement;
+    };
+    interface HTMLVykonEditorElementEventMap {
+        "editor-closed": string;
+    }
+    interface HTMLVykonEditorElement extends Components.VykonEditor, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLVykonEditorElementEventMap>(type: K, listener: (this: HTMLVykonEditorElement, ev: VykonEditorCustomEvent<HTMLVykonEditorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLVykonEditorElementEventMap>(type: K, listener: (this: HTMLVykonEditorElement, ev: VykonEditorCustomEvent<HTMLVykonEditorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLVykonEditorElement: {
+        prototype: HTMLVykonEditorElement;
+        new (): HTMLVykonEditorElement;
+    };
+    interface HTMLVykonListElementEventMap {
+        "entry-clicked": string;
+    }
+    interface HTMLVykonListElement extends Components.VykonList, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLVykonListElementEventMap>(type: K, listener: (this: HTMLVykonListElement, ev: VykonListCustomEvent<HTMLVykonListElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLVykonListElementEventMap>(type: K, listener: (this: HTMLVykonListElement, ev: VykonListCustomEvent<HTMLVykonListElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLVykonListElement: {
+        prototype: HTMLVykonListElement;
+        new (): HTMLVykonListElement;
+    };
     interface HTMLElementTagNameMap {
         "main-component": HTMLMainComponentElement;
+        "vykon-app": HTMLVykonAppElement;
+        "vykon-editor": HTMLVykonEditorElement;
+        "vykon-list": HTMLVykonListElement;
     }
 }
 declare namespace LocalJSX {
     interface MainComponent {
     }
+    interface VykonApp {
+        /**
+          * @default ''
+         */
+        "basePath"?: string;
+    }
+    interface VykonEditor {
+        "entryId"?: string;
+        "onEditor-closed"?: (event: VykonEditorCustomEvent<string>) => void;
+    }
+    interface VykonList {
+        "onEntry-clicked"?: (event: VykonListCustomEvent<string>) => void;
+    }
+
+    interface VykonAppAttributes {
+        "basePath": string;
+    }
+    interface VykonEditorAttributes {
+        "entryId": string;
+    }
+
     interface IntrinsicElements {
         "main-component": MainComponent;
+        "vykon-app": Omit<VykonApp, keyof VykonAppAttributes> & { [K in keyof VykonApp & keyof VykonAppAttributes]?: VykonApp[K] } & { [K in keyof VykonApp & keyof VykonAppAttributes as `attr:${K}`]?: VykonAppAttributes[K] } & { [K in keyof VykonApp & keyof VykonAppAttributes as `prop:${K}`]?: VykonApp[K] };
+        "vykon-editor": Omit<VykonEditor, keyof VykonEditorAttributes> & { [K in keyof VykonEditor & keyof VykonEditorAttributes]?: VykonEditor[K] } & { [K in keyof VykonEditor & keyof VykonEditorAttributes as `attr:${K}`]?: VykonEditorAttributes[K] } & { [K in keyof VykonEditor & keyof VykonEditorAttributes as `prop:${K}`]?: VykonEditor[K] };
+        "vykon-list": VykonList;
     }
 }
 export { LocalJSX as JSX };
@@ -32,6 +118,9 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "main-component": LocalJSX.IntrinsicElements["main-component"] & JSXBase.HTMLAttributes<HTMLMainComponentElement>;
+            "vykon-app": LocalJSX.IntrinsicElements["vykon-app"] & JSXBase.HTMLAttributes<HTMLVykonAppElement>;
+            "vykon-editor": LocalJSX.IntrinsicElements["vykon-editor"] & JSXBase.HTMLAttributes<HTMLVykonEditorElement>;
+            "vykon-list": LocalJSX.IntrinsicElements["vykon-list"] & JSXBase.HTMLAttributes<HTMLVykonListElement>;
         }
     }
 }

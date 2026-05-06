@@ -10,6 +10,7 @@ export class MainComponent {
     return (
       <Host>
         <h1>DHK AMBULANCE UFE</h1>
+        <vykon-app base-path="/"></vykon-app>
       </Host>
     );
   }
