@@ -1,7 +1,7 @@
 :host {
   display: block;
-  color: rgba(18, 28, 32, 0.9);
-  font-family: 'Roboto', sans-serif;
+  color: var(--shui-text, #34383c);
+  font-family: var(--shui-font, "Segoe UI", Arial, sans-serif);
   container-type: inline-size;
 }
 
@@ -12,16 +12,14 @@
   align-items: start;
   margin: 0 0 18px;
   padding: clamp(18px, 2vw, 22px);
-  border: 1px solid color-mix(in srgb, var(--md-sys-color-primary, #6750a4) 18%, #ffffff);
+  border: 1px solid color-mix(in srgb, var(--shui-primary, #008f95) 22%, #ffffff);
   border-radius: 20px;
-  background:
-    radial-gradient(circle at top left, rgba(103, 80, 164, 0.14), transparent 34%),
-    linear-gradient(135deg, #fbfffd 0%, #f3f7f7 100%);
+  background: var(--shui-surface, #ffffff);
 }
 
 .eyebrow {
   margin: 0 0 8px;
-  color: var(--md-sys-color-primary, #6750a4);
+  color: var(--shui-primary-dark, #006f74);
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -38,7 +36,7 @@ h2 {
 .intro {
   max-width: 680px;
   margin: 10px 0 0;
-  color: rgba(18, 28, 32, 0.66);
+  color: var(--shui-muted, #687076);
   font-size: 0.96rem;
   line-height: 1.55;
 }
@@ -55,11 +53,11 @@ h2 {
 }
 
 .status-card md-icon {
-  color: var(--md-sys-color-primary, #6750a4);
+  color: var(--shui-primary, #008f95);
 }
 
 .status-card span {
-  color: rgba(18, 28, 32, 0.58);
+  color: var(--shui-muted, #687076);
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -86,8 +84,8 @@ h2 {
 }
 
 .success {
-  background: #e8f5ef;
-  color: #0f5d3d;
+  background: var(--shui-success-soft, #e4f4ef);
+  color: var(--shui-success, #007a5f);
 }
 
 .form-section {
@@ -101,7 +99,7 @@ h2 {
   align-items: center;
   gap: 8px;
   margin: 0 0 14px;
-  color: var(--md-sys-color-primary, #6750a4);
+  color: var(--shui-primary-dark, #006f74);
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.09em;
@@ -132,18 +130,18 @@ h2 {
   gap: 12px;
   margin: 0 0 20px;
   padding: 14px 16px;
-  border: 1px solid #c8e6d6;
+  border: 1px solid color-mix(in srgb, var(--shui-success, #007a5f) 24%, #ffffff);
   border-radius: 14px;
-  background: #f5fbf8;
+  background: var(--shui-success-soft, #e4f4ef);
 }
 
 .created-summary md-icon {
-  color: #16804f;
+  color: var(--shui-success, #007a5f);
 }
 
 .created-summary span {
   display: block;
-  color: rgba(18, 28, 32, 0.58);
+  color: var(--shui-muted, #687076);
   font-size: 0.78rem;
 }
 

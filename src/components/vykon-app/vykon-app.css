@@ -1,40 +1,52 @@
 :host {
   display: block;
   width: 100%;
-  font-family: 'Roboto', sans-serif;
-  color: rgba(0, 0, 0, 0.87);
+  font-family: var(--shui-font, "Segoe UI", Arial, sans-serif);
+  color: var(--shui-text, #34383c);
+  background: var(--shui-page, #eef4f5);
+  min-height: 100vh;
+
+  --md-primary-tab-active-indicator-color: var(--shui-primary, #008f95);
+  --md-primary-tab-active-label-text-color: var(--shui-primary, #008f95);
+  --md-primary-tab-inactive-label-text-color: var(--shui-muted, #687076);
+  --md-primary-tab-container-color: var(--shui-surface, #ffffff);
 }
 
 .page-header {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px 20px;
+  min-height: 80px;
+  padding: 0 34px;
   border-bottom: 1px solid var(--md-sys-color-outline-variant, #e0e0e0);
+  background: var(--shui-surface, #ffffff);
 }
 
 .page-header md-icon {
   font-size: 28px;
-  color: var(--md-sys-color-primary, #6750a4);
+  color: var(--shui-primary, #008f95);
 }
 
 .page-header h1 {
   margin: 0;
-  font-size: 1.25rem;
-  font-weight: 500;
+  font-size: 1.625rem;
+  font-weight: 600;
   letter-spacing: 0.01em;
+  color: var(--shui-ink, #202428);
 }
 
 .tab-bar {
   width: 100%;
   border-bottom: 1px solid var(--md-sys-color-outline-variant, #e0e0e0);
+  background: var(--shui-surface, #ffffff);
 }
 
 .tab-panel {
-  padding: 20px;
+  padding: clamp(16px, 2.6vw, 28px);
+  background: var(--shui-page, #eef4f5);
 }
 
-.tab-panel[hidden] {
+.tab-panel-content[hidden] {
   display: none;
 }
 
@@ -42,13 +54,17 @@
   margin: 32px 0;
   font-weight: 400;
   font-size: 1.125rem;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--shui-muted, #687076);
   text-align: center;
 }
 
 @media (max-width: 600px) {
   .page-header {
-    padding: 12px;
+    min-height: 64px;
+    padding: 0 16px;
+  }
+  .page-header h1 {
+    font-size: 1.25rem;
   }
   .tab-panel {
     padding: 12px;

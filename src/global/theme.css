@@ -1,6 +1,4 @@
-:host {
-  display: block;
-  min-height: 100vh;
+:root {
   --shui-primary: #008f95;
   --shui-primary-dark: #006f74;
   --shui-primary-soft: #e5f5f6;
@@ -34,8 +32,10 @@
   --md-sys-color-on-secondary: #ffffff;
   --md-sys-color-secondary-container: var(--shui-accent-soft);
   --md-sys-color-on-secondary-container: #7d1749;
+  --md-sys-color-tertiary: var(--shui-primary-dark);
   --md-sys-color-surface: var(--shui-surface);
   --md-sys-color-surface-container: var(--shui-surface-soft);
+  --md-sys-color-surface-container-high: #edf3f4;
   --md-sys-color-background: var(--shui-page);
   --md-sys-color-on-surface: var(--shui-text);
   --md-sys-color-on-surface-variant: var(--shui-muted);
@@ -44,20 +44,26 @@
   --md-sys-color-error: var(--shui-error);
   --md-sys-color-error-container: var(--shui-error-soft);
   --md-sys-color-on-error-container: var(--shui-error);
+}
 
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--shui-page);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
   background: var(--shui-page);
   color: var(--shui-text);
   font-family: var(--shui-font);
+  text-rendering: optimizeLegibility;
 }
 
-h1 {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  border: 0;
+a {
+  color: var(--shui-primary-dark);
 }

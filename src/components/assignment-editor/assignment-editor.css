@@ -1,6 +1,6 @@
 :host {
   display: block;
-  font-family: 'Roboto', sans-serif;
+  font-family: var(--shui-font, "Segoe UI", Arial, sans-serif);
   max-width: 800px;
   margin: 0 auto;
   padding: 16px;
@@ -14,9 +14,9 @@
 .error {
   margin: 0 0 16px;
   padding: 12px 16px;
-  background: #ffebee;
-  color: #b00020;
-  border-radius: 4px;
+  background: var(--shui-error-soft, #fceeee);
+  color: var(--shui-error, #b3261e);
+  border-radius: var(--shui-radius-sm, 8px);
   font-size: 0.875rem;
 }
 

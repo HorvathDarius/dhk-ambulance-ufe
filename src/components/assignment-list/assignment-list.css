@@ -1,10 +1,10 @@
 :host {
   display: block;
-  font-family: 'Roboto', sans-serif;
+  font-family: var(--shui-font, "Segoe UI", Arial, sans-serif);
   max-width: 900px;
   margin: 0 auto;
   padding: 16px;
-  color: rgba(0, 0, 0, 0.87);
+  color: var(--shui-text, #34383c);
 }
 
 .header {
@@ -33,21 +33,22 @@
   gap: 8px;
   padding: 10px 14px;
   border-radius: 12px;
-  background: var(--md-sys-color-surface-container, #f3eef6);
+  background: var(--shui-surface, #ffffff);
+  border: 1px solid var(--shui-border, #d8e2e5);
   min-width: 0;
 }
 
 .stat md-icon {
   font-size: 20px;
-  color: var(--md-sys-color-on-surface-variant, #555);
+  color: var(--shui-muted, #687076);
 }
 
 .stat-active {
-  background: #e7f6ec;
+  background: var(--shui-primary-soft, #e5f5f6);
 }
 
 .stat-active md-icon {
-  color: #1b873d;
+  color: var(--shui-primary, #008f95);
 }
 
 .stat-num {
@@ -58,7 +59,7 @@
 
 .stat-label {
   font-size: 0.85rem;
-  color: rgba(0, 0, 0, 0.65);
+  color: var(--shui-muted, #687076);
 }
 
 /* Controls row: search + view toggle */
@@ -77,10 +78,10 @@
 
 .view-toggle {
   display: inline-flex;
-  border: 1px solid var(--md-sys-color-outline, #c4c4c4);
+  border: 1px solid var(--shui-border, #d8e2e5);
   border-radius: 999px;
   overflow: hidden;
-  background: var(--md-sys-color-surface, #fff);
+  background: var(--shui-surface, #ffffff);
 }
 
 .toggle-btn {
@@ -93,7 +94,7 @@
   cursor: pointer;
   font-family: inherit;
   font-size: 0.875rem;
-  color: rgba(0, 0, 0, 0.75);
+  color: var(--shui-text, #34383c);
   transition: background 0.15s ease;
 }
 
@@ -102,12 +103,12 @@
 }
 
 .toggle-btn:hover {
-  background: rgba(103, 80, 164, 0.08);
+  background: var(--shui-primary-soft, #e5f5f6);
 }
 
 .toggle-btn.selected {
-  background: var(--md-sys-color-secondary-container, #e8def8);
-  color: var(--md-sys-color-on-secondary-container, #1d192b);
+  background: var(--shui-primary-soft, #e5f5f6);
+  color: var(--shui-primary-dark, #006f74);
   font-weight: 500;
 }
 
@@ -146,7 +147,7 @@
 }
 
 .dept-arrow {
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--shui-muted, #687076);
   font-weight: 400;
 }
 
@@ -159,7 +160,7 @@
 }
 
 .meta-sep {
-  color: rgba(0, 0, 0, 0.4);
+  color: var(--shui-muted, #687076);
 }
 
 /* Status chip */
@@ -175,18 +176,18 @@
 }
 
 .status-active {
-  background: #e7f6ec;
-  color: #1b873d;
+  background: var(--shui-primary-soft, #e5f5f6);
+  color: var(--shui-primary-dark, #006f74);
 }
 
 .status-ended {
-  background: #ececec;
-  color: #555;
+  background: var(--shui-surface-soft, #f4f7f8);
+  color: var(--shui-muted, #687076);
 }
 
 .status-upcoming {
-  background: #e3f0ff;
-  color: #1f5fa3;
+  background: var(--shui-accent-soft, #fde7f2);
+  color: var(--shui-accent, #e7308a);
 }
 
 /* Actions */
@@ -199,16 +200,16 @@
 .empty {
   padding: 32px;
   text-align: center;
-  color: rgba(0, 0, 0, 0.55);
+  color: var(--shui-muted, #687076);
   font-style: italic;
 }
 
 .error {
   margin: 8px 0;
   padding: 12px 16px;
-  background: #ffebee;
-  color: #b00020;
-  border-radius: 4px;
+  background: var(--shui-error-soft, #fceeee);
+  color: var(--shui-error, #b3261e);
+  border-radius: var(--shui-radius-sm, 8px);
   font-size: 0.875rem;
 }
 
@@ -220,14 +221,14 @@
 }
 
 .group {
-  border: 1px solid var(--md-sys-color-outline-variant, #e0e0e0);
+  border: 1px solid var(--shui-border, #d8e2e5);
   border-radius: 12px;
   overflow: hidden;
-  background: var(--md-sys-color-surface, #fff);
+  background: var(--shui-surface, #ffffff);
 }
 
 .group.expanded {
-  background: var(--md-sys-color-surface-container-low, #f9f7fb);
+  background: var(--shui-surface-soft, #f4f7f8);
 }
 
 .group-header {
@@ -247,11 +248,11 @@
 }
 
 .group-header:hover {
-  background: rgba(103, 80, 164, 0.05);
+  background: var(--shui-primary-soft, #e5f5f6);
 }
 
 .group-header .chevron {
-  color: rgba(0, 0, 0, 0.55);
+  color: var(--shui-muted, #687076);
 }
 
 .group-name {
@@ -277,20 +278,20 @@
   min-width: 24px;
   padding: 2px 8px;
   border-radius: 999px;
-  background: var(--md-sys-color-secondary-container, #e8def8);
-  color: var(--md-sys-color-on-secondary-container, #1d192b);
+  background: var(--shui-primary-soft, #e5f5f6);
+  color: var(--shui-primary-dark, #006f74);
   font-size: 0.8rem;
   font-weight: 600;
 }
 
 .group-active {
   font-size: 0.75rem;
-  color: #1b873d;
+  color: var(--shui-primary-dark, #006f74);
   font-weight: 500;
 }
 
 .group-list {
-  border-top: 1px solid var(--md-sys-color-outline-variant, #e0e0e0);
+  border-top: 1px solid var(--shui-border, #d8e2e5);
 }
 
 @media (max-width: 600px) {

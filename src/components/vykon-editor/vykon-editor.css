@@ -1,8 +1,8 @@
 :host {
   display: block;
-  font-family: 'Roboto', sans-serif;
+  font-family: var(--shui-font, "Segoe UI", Arial, sans-serif);
   padding: 24px;
-  color: rgba(0, 0, 0, 0.87);
+  color: var(--shui-text, #34383c);
 }
 
 .title-bar {
@@ -16,7 +16,7 @@
 
 .title-icon {
   font-size: 36px;
-  color: var(--md-sys-color-primary, #6750a4);
+  color: var(--shui-primary, #008f95);
   flex: 0 0 auto;
 }
 
@@ -37,7 +37,7 @@
 .subtitle {
   margin: 0;
   font-size: 0.875rem;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--shui-muted, #687076);
 }
 
 .error {
@@ -46,9 +46,9 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: var(--md-sys-color-error-container, #fdecea);
-  color: var(--md-sys-color-on-error-container, #b00020);
-  border-radius: 8px;
+  background: var(--shui-error-soft, #fceeee);
+  color: var(--shui-error, #b3261e);
+  border-radius: var(--shui-radius-sm, 8px);
   font-size: 0.875rem;
 }
 
@@ -65,7 +65,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--md-sys-color-primary, #6750a4);
+  color: var(--shui-primary-dark, #006f74);
 }
 
 .section-title md-icon {

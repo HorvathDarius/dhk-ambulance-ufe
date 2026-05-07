@@ -1,6 +1,6 @@
 :host {
   display: block;
-  font-family: 'Roboto', sans-serif;
+  font-family: var(--shui-font, "Segoe UI", Arial, sans-serif);
 }
 
 .header {
@@ -26,15 +26,15 @@
 .empty {
   padding: 40px 16px;
   text-align: center;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--shui-muted, #687076);
   font-style: italic;
 }
 
 .error {
   margin: 8px 0 16px;
   padding: 12px 16px;
-  background: var(--md-sys-color-error-container, #fdecea);
-  color: var(--md-sys-color-on-error-container, #b00020);
-  border-radius: 8px;
+  background: var(--shui-error-soft, #fceeee);
+  color: var(--shui-error, #b3261e);
+  border-radius: var(--shui-radius-sm, 8px);
   font-size: 0.875rem;
 }
