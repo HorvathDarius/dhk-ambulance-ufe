@@ -14,6 +14,7 @@ export class VykonApp {
   @Prop() apiBase: string = '';
 
   @State() private relativePath = '';
+  @State() private activeTabIndex = 2;
 
   componentWillLoad() {
     const baseUri = new URL(this.basePath, document.baseURI || '/').pathname;
@@ -31,6 +32,11 @@ export class VykonApp {
     toRelative(location.pathname);
   }
 
+  private handleTabChange = (e: Event) => {
+    const idx = (e.target as any)?.activeTabIndex;
+    if (typeof idx === 'number') this.activeTabIndex = idx;
+  };
+
   render() {
     let element = 'list';
     let entryId = '@new';
@@ -44,20 +50,49 @@ export class VykonApp {
       window.navigation.navigate(absolute);
     };
 
-    return (
-      <Host>
-        {element === 'editor' ? (
+    if (element === 'editor') {
+      return (
+        <Host>
           <vykon-editor
             entry-id={entryId}
             api-base={this.apiBase}
             oneditor-closed={() => navigate('./list')}
           ></vykon-editor>
-        ) : (
+        </Host>
+      );
+    }
+
+    return (
+      <Host>
+        <header class="page-header">
+          <md-icon>home_health</md-icon>
+          <h1>DHK Ambulance</h1>
+        </header>
+
+        <md-tabs
+          class="tab-bar"
+          activeTabIndex={this.activeTabIndex}
+          onChange={this.handleTabChange}
+        >
+          <md-primary-tab active={this.activeTabIndex === 0}>Task 1</md-primary-tab>
+          <md-primary-tab active={this.activeTabIndex === 1}>Task 2</md-primary-tab>
+          <md-primary-tab active={this.activeTabIndex === 2}>Performance Records</md-primary-tab>
+        </md-tabs>
+
+        <section class="tab-panel" hidden={this.activeTabIndex !== 0}>
+          <h2 class="placeholder">Task 1</h2>
+        </section>
+
+        <section class="tab-panel" hidden={this.activeTabIndex !== 1}>
+          <h2 class="placeholder">Task 2</h2>
+        </section>
+
+        <section class="tab-panel" hidden={this.activeTabIndex !== 2}>
           <vykon-list
             api-base={this.apiBase}
             onentry-clicked={(ev: CustomEvent<string>) => navigate('./editor/' + ev.detail)}
           ></vykon-list>
-        )}
+        </section>
       </Host>
     );
   }

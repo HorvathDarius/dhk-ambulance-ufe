@@ -195,84 +195,132 @@ export class VykonEditor {
 
     return (
       <Host>
-        <h2 class="title">{editMode ? 'Upraviť výkon' : 'Nový výkon'}</h2>
+        <header class="title-bar">
+          <md-icon class="title-icon">{editMode ? 'edit_note' : 'add_circle'}</md-icon>
+          <div class="title-text">
+            <h2 class="title">{editMode ? 'Upraviť výkon' : 'Nový výkon'}</h2>
+            <p class="subtitle">
+              {editMode
+                ? 'Aktualizujte údaje záznamu o výkone.'
+                : 'Vyplňte údaje pre nový záznam o výkone.'}
+            </p>
+          </div>
+        </header>
 
         {this.errorMessage ? <div class="error">{this.errorMessage}</div> : null}
 
-        <div class="grid">
-          <md-outlined-text-field
-            label="Meno zamestnanca *"
-            value={this.form.employeeName}
-            error={!!showErr('employeeName')}
-            error-text={showErr('employeeName') ?? ''}
-            onInput={this.inputHandler('employeeName')}
-          ></md-outlined-text-field>
+        <section class="form-section">
+          <h3 class="section-title">
+            <md-icon>person</md-icon>
+            Zamestnanec
+          </h3>
+          <div class="grid">
+            <md-outlined-text-field
+              label="Meno zamestnanca *"
+              value={this.form.employeeName}
+              error={!!showErr('employeeName')}
+              error-text={showErr('employeeName') ?? ''}
+              onInput={this.inputHandler('employeeName')}
+            >
+              <md-icon slot="leading-icon">badge</md-icon>
+            </md-outlined-text-field>
 
-          <md-outlined-text-field
-            label="ID zamestnanca"
-            value={this.form.employeeId}
-            onInput={this.inputHandler('employeeId')}
-          ></md-outlined-text-field>
+            <md-outlined-text-field
+              label="ID zamestnanca"
+              value={this.form.employeeId}
+              onInput={this.inputHandler('employeeId')}
+            >
+              <md-icon slot="leading-icon">tag</md-icon>
+            </md-outlined-text-field>
+          </div>
+        </section>
 
-          <md-outlined-text-field
-            label="Dátum *"
-            type="date"
-            value={this.form.date}
-            error={!!showErr('date')}
-            error-text={showErr('date') ?? ''}
-            onInput={this.inputHandler('date')}
-          ></md-outlined-text-field>
+        <section class="form-section">
+          <h3 class="section-title">
+            <md-icon>monitor_heart</md-icon>
+            Výkon
+          </h3>
+          <div class="grid">
+            <md-outlined-text-field
+              label="Dátum *"
+              type="date"
+              value={this.form.date}
+              error={!!showErr('date')}
+              error-text={showErr('date') ?? ''}
+              onInput={this.inputHandler('date')}
+            >
+              <md-icon slot="leading-icon">calendar_month</md-icon>
+            </md-outlined-text-field>
 
-          <md-outlined-text-field
-            label="Odpracované hodiny *"
-            type="number"
-            min="0"
-            step="0.5"
-            value={this.form.hoursWorked}
-            error={!!showErr('hoursWorked')}
-            error-text={showErr('hoursWorked') ?? ''}
-            onInput={this.inputHandler('hoursWorked')}
-          ></md-outlined-text-field>
+            <md-outlined-text-field
+              label="Odpracované hodiny *"
+              type="number"
+              min="0"
+              step="0.5"
+              value={this.form.hoursWorked}
+              error={!!showErr('hoursWorked')}
+              error-text={showErr('hoursWorked') ?? ''}
+              onInput={this.inputHandler('hoursWorked')}
+            >
+              <md-icon slot="leading-icon">schedule</md-icon>
+            </md-outlined-text-field>
 
-          <md-outlined-text-field
-            label="Počet vyšetrení"
-            type="number"
-            min="0"
-            value={this.form.examinationCount}
-            error={!!showErr('examinationCount')}
-            error-text={showErr('examinationCount') ?? ''}
-            onInput={this.inputHandler('examinationCount')}
-          ></md-outlined-text-field>
+            <md-outlined-text-field
+              label="Počet vyšetrení"
+              type="number"
+              min="0"
+              value={this.form.examinationCount}
+              error={!!showErr('examinationCount')}
+              error-text={showErr('examinationCount') ?? ''}
+              onInput={this.inputHandler('examinationCount')}
+            >
+              <md-icon slot="leading-icon">stethoscope</md-icon>
+            </md-outlined-text-field>
 
-          <md-outlined-text-field
-            label="Počet operácií"
-            type="number"
-            min="0"
-            value={this.form.operationCount}
-            error={!!showErr('operationCount')}
-            error-text={showErr('operationCount') ?? ''}
-            onInput={this.inputHandler('operationCount')}
-          ></md-outlined-text-field>
+            <md-outlined-text-field
+              label="Počet operácií"
+              type="number"
+              min="0"
+              value={this.form.operationCount}
+              error={!!showErr('operationCount')}
+              error-text={showErr('operationCount') ?? ''}
+              onInput={this.inputHandler('operationCount')}
+            >
+              <md-icon slot="leading-icon">surgical</md-icon>
+            </md-outlined-text-field>
 
-          <md-outlined-text-field
-            label="Počet služieb"
-            type="number"
-            min="0"
-            value={this.form.shiftCount}
-            error={!!showErr('shiftCount')}
-            error-text={showErr('shiftCount') ?? ''}
-            onInput={this.inputHandler('shiftCount')}
-          ></md-outlined-text-field>
+            <md-outlined-text-field
+              label="Počet služieb"
+              type="number"
+              min="0"
+              value={this.form.shiftCount}
+              error={!!showErr('shiftCount')}
+              error-text={showErr('shiftCount') ?? ''}
+              onInput={this.inputHandler('shiftCount')}
+            >
+              <md-icon slot="leading-icon">nightlight</md-icon>
+            </md-outlined-text-field>
+          </div>
+        </section>
 
-          <md-outlined-text-field
-            class="span-2"
-            label="Poznámka"
-            type="textarea"
-            rows={3}
-            value={this.form.note}
-            onInput={this.inputHandler('note')}
-          ></md-outlined-text-field>
-        </div>
+        <section class="form-section">
+          <h3 class="section-title">
+            <md-icon>sticky_note_2</md-icon>
+            Poznámka
+          </h3>
+          <div class="grid">
+            <md-outlined-text-field
+              class="span-2"
+              label="Poznámka"
+              type="textarea"
+              rows={3}
+              value={this.form.note}
+              onInput={this.inputHandler('note')}
+            >
+              <md-icon slot="leading-icon">edit_note</md-icon>
+            </md-outlined-text-field>
+          </div>
+        </section>
 
         <div class="actions">
           {editMode ? (
@@ -283,6 +331,7 @@ export class VykonEditor {
           ) : null}
           <span class="stretch-fill"></span>
           <md-outlined-button onClick={() => this.editorClosed.emit('cancel')}>
+            <md-icon slot="icon">close</md-icon>
             Zrušiť
           </md-outlined-button>
           <md-filled-button disabled={!valid || this.saving} onClick={this.handleStore}>
