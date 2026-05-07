@@ -1,0 +1,10 @@
+apis/EmployeeProfilesApi.ts
+apis/index.ts
+docs/EmployeeProfile.md
+docs/EmployeeProfilesApi.md
+docs/EmployeeStatus.md
+index.ts
+models/EmployeeProfile.ts
+models/EmployeeStatus.ts
+models/index.ts
+runtime.ts
