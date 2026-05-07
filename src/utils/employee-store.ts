@@ -14,6 +14,7 @@ export interface EmployeeProfile {
   note?: string;
   status: 'active';
   createdAt: string;
+  updatedAt?: string;
 }
 
 export const employeeStorageKey = 'dhk-ambulance-employees';
@@ -39,4 +40,19 @@ export const storeEmployeeProfiles = (profiles: EmployeeProfile[]) => {
 
 export const appendEmployeeProfile = (profile: EmployeeProfile) => {
   storeEmployeeProfiles([...loadEmployeeProfiles(), profile]);
+};
+
+export const findEmployeeProfile = (employeeId: string): EmployeeProfile | undefined =>
+  loadEmployeeProfiles().find(profile => profile.id === employeeId);
+
+export const updateEmployeeProfile = (profile: EmployeeProfile) => {
+  const profiles = loadEmployeeProfiles();
+  const index = profiles.findIndex(existing => existing.id === profile.id);
+  if (index === -1) {
+    throw new Error('Profil zamestnanca sa nenašiel.');
+  }
+
+  const updated = [...profiles];
+  updated[index] = profile;
+  storeEmployeeProfiles(updated);
 };

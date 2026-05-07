@@ -78,4 +78,22 @@ describe('employee-list', () => {
     expect(page.root.shadowRoot.textContent).toContain('Peter Kováč');
     expect(page.root.shadowRoot.textContent).not.toContain('Anna Nováková');
   });
+
+  it('emits selected employee id for editing', async () => {
+    const page = await newSpecPage({
+      components: [EmployeeList],
+      html: `<employee-list></employee-list>`,
+    });
+    const editSpy = jest.fn();
+    page.root.addEventListener('employee-edit-requested', editSpy);
+    page.rootInstance.employees = profiles;
+    await page.waitForChanges();
+
+    const editButton = Array.from(page.root.shadowRoot.querySelectorAll('md-outlined-button'))
+      .find(button => button.textContent.includes('Upraviť'));
+    editButton.click();
+
+    expect(editSpy).toHaveBeenCalledTimes(1);
+    expect(editSpy.mock.calls[0][0].detail).toEqual('EMP-1');
+  });
 });

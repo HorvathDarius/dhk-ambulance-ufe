@@ -229,12 +229,17 @@ h2 {
 footer {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
   justify-content: space-between;
   padding-top: 10px;
   border-top: 1px solid #edf2f0;
   color: rgba(18, 28, 32, 0.52);
   font-size: 0.78rem;
+}
+
+footer md-outlined-button {
+  margin-left: auto;
 }
 
 a {

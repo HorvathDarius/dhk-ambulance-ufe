@@ -32,6 +32,10 @@ export namespace Components {
         "apiBase": string;
     }
     interface EmployeeCreate {
+        /**
+          * @default ''
+         */
+        "editEmployeeId": string;
     }
     interface EmployeeList {
         /**
@@ -78,6 +82,10 @@ export interface AssignmentListCustomEvent<T> extends CustomEvent<T> {
 export interface EmployeeCreateCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLEmployeeCreateElement;
+}
+export interface EmployeeListCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLEmployeeListElement;
 }
 export interface VykonEditorCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -130,6 +138,8 @@ declare global {
     };
     interface HTMLEmployeeCreateElementEventMap {
         "employee-created": EmployeeProfile;
+        "employee-updated": EmployeeProfile;
+        "employee-edit-cancelled": string;
     }
     interface HTMLEmployeeCreateElement extends Components.EmployeeCreate, HTMLStencilElement {
         addEventListener<K extends keyof HTMLEmployeeCreateElementEventMap>(type: K, listener: (this: HTMLEmployeeCreateElement, ev: EmployeeCreateCustomEvent<HTMLEmployeeCreateElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -145,7 +155,18 @@ declare global {
         prototype: HTMLEmployeeCreateElement;
         new (): HTMLEmployeeCreateElement;
     };
+    interface HTMLEmployeeListElementEventMap {
+        "employee-edit-requested": string;
+    }
     interface HTMLEmployeeListElement extends Components.EmployeeList, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLEmployeeListElementEventMap>(type: K, listener: (this: HTMLEmployeeListElement, ev: EmployeeListCustomEvent<HTMLEmployeeListElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLEmployeeListElementEventMap>(type: K, listener: (this: HTMLEmployeeListElement, ev: EmployeeListCustomEvent<HTMLEmployeeListElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
     var HTMLEmployeeListElement: {
         prototype: HTMLEmployeeListElement;
@@ -243,9 +264,16 @@ declare namespace LocalJSX {
         "onEntry-clicked"?: (event: AssignmentListCustomEvent<string>) => void;
     }
     interface EmployeeCreate {
+        /**
+          * @default ''
+         */
+        "editEmployeeId"?: string;
         "onEmployee-created"?: (event: EmployeeCreateCustomEvent<EmployeeProfile>) => void;
+        "onEmployee-edit-cancelled"?: (event: EmployeeCreateCustomEvent<string>) => void;
+        "onEmployee-updated"?: (event: EmployeeCreateCustomEvent<EmployeeProfile>) => void;
     }
     interface EmployeeList {
+        "onEmployee-edit-requested"?: (event: EmployeeListCustomEvent<string>) => void;
         /**
           * @default 0
          */
@@ -292,6 +320,9 @@ declare namespace LocalJSX {
     interface AssignmentListAttributes {
         "apiBase": string;
     }
+    interface EmployeeCreateAttributes {
+        "editEmployeeId": string;
+    }
     interface EmployeeListAttributes {
         "refreshToken": number;
     }
@@ -311,7 +342,7 @@ declare namespace LocalJSX {
         "assignment-app": Omit<AssignmentApp, keyof AssignmentAppAttributes> & { [K in keyof AssignmentApp & keyof AssignmentAppAttributes]?: AssignmentApp[K] } & { [K in keyof AssignmentApp & keyof AssignmentAppAttributes as `attr:${K}`]?: AssignmentAppAttributes[K] } & { [K in keyof AssignmentApp & keyof AssignmentAppAttributes as `prop:${K}`]?: AssignmentApp[K] };
         "assignment-editor": Omit<AssignmentEditor, keyof AssignmentEditorAttributes> & { [K in keyof AssignmentEditor & keyof AssignmentEditorAttributes]?: AssignmentEditor[K] } & { [K in keyof AssignmentEditor & keyof AssignmentEditorAttributes as `attr:${K}`]?: AssignmentEditorAttributes[K] } & { [K in keyof AssignmentEditor & keyof AssignmentEditorAttributes as `prop:${K}`]?: AssignmentEditor[K] };
         "assignment-list": Omit<AssignmentList, keyof AssignmentListAttributes> & { [K in keyof AssignmentList & keyof AssignmentListAttributes]?: AssignmentList[K] } & { [K in keyof AssignmentList & keyof AssignmentListAttributes as `attr:${K}`]?: AssignmentListAttributes[K] } & { [K in keyof AssignmentList & keyof AssignmentListAttributes as `prop:${K}`]?: AssignmentList[K] };
-        "employee-create": EmployeeCreate;
+        "employee-create": Omit<EmployeeCreate, keyof EmployeeCreateAttributes> & { [K in keyof EmployeeCreate & keyof EmployeeCreateAttributes]?: EmployeeCreate[K] } & { [K in keyof EmployeeCreate & keyof EmployeeCreateAttributes as `attr:${K}`]?: EmployeeCreateAttributes[K] } & { [K in keyof EmployeeCreate & keyof EmployeeCreateAttributes as `prop:${K}`]?: EmployeeCreate[K] };
         "employee-list": Omit<EmployeeList, keyof EmployeeListAttributes> & { [K in keyof EmployeeList & keyof EmployeeListAttributes]?: EmployeeList[K] } & { [K in keyof EmployeeList & keyof EmployeeListAttributes as `attr:${K}`]?: EmployeeListAttributes[K] } & { [K in keyof EmployeeList & keyof EmployeeListAttributes as `prop:${K}`]?: EmployeeList[K] };
         "employee-workspace": EmployeeWorkspace;
         "main-component": MainComponent;

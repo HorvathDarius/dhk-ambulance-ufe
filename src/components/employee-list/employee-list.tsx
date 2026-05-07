@@ -1,4 +1,4 @@
-import { Component, Host, Prop, State, Watch, h } from '@stencil/core';
+import { Component, Event, EventEmitter, Host, Prop, State, Watch, h } from '@stencil/core';
 import { EmployeeProfile, employeeFullName, loadEmployeeProfiles } from '../../utils/employee-store';
 
 type FilterField = 'all' | 'department' | 'specialization';
@@ -24,6 +24,8 @@ export class EmployeeList {
   @State() employees: EmployeeProfile[] = [];
   @State() filter: FilterState = emptyFilter();
   @State() errorMessage: string = '';
+
+  @Event({ eventName: 'employee-edit-requested' }) employeeEditRequested: EventEmitter<string>;
 
   private storageListener = () => this.loadEmployees();
 
@@ -218,6 +220,10 @@ export class EmployeeList {
                 <footer>
                   <span>{employee.id}</span>
                   {employee.email ? <a href={`mailto:${employee.email}`}>{employee.email}</a> : null}
+                  <md-outlined-button onClick={() => this.employeeEditRequested.emit(employee.id)}>
+                    <md-icon slot="icon">edit</md-icon>
+                    Upraviť
+                  </md-outlined-button>
                 </footer>
               </article>
             ))}

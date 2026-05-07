@@ -1,5 +1,11 @@
-import { Component, Event, EventEmitter, Host, State, h } from '@stencil/core';
-import { appendEmployeeProfile, EmployeeProfile } from '../../utils/employee-store';
+import { Component, Event, EventEmitter, Host, Prop, State, Watch, h } from '@stencil/core';
+import {
+  appendEmployeeProfile,
+  EmployeeProfile,
+  employeeFullName,
+  findEmployeeProfile,
+  updateEmployeeProfile,
+} from '../../utils/employee-store';
 
 interface EmployeeFormState {
   firstName: string;
@@ -42,20 +48,76 @@ const requiredFields: (keyof EmployeeFormState)[] = [
   'certificates',
 ];
 
+const profileToForm = (profile: EmployeeProfile): EmployeeFormState => ({
+  firstName: profile.firstName,
+  lastName: profile.lastName,
+  birthDate: profile.birthDate,
+  email: profile.email ?? '',
+  phone: profile.phone ?? '',
+  position: profile.position,
+  department: profile.department ?? '',
+  specialization: profile.specialization,
+  qualification: profile.qualification,
+  employmentStartDate: profile.employmentStartDate,
+  certificates: profile.certificates.join('\n'),
+  note: profile.note ?? '',
+});
+
 @Component({
   tag: 'employee-create',
   styleUrl: 'employee-create.css',
   shadow: true,
 })
 export class EmployeeCreate {
+  @Prop() editEmployeeId: string = '';
+
   @State() form: EmployeeFormState = emptyForm();
   @State() touched: Partial<Record<keyof EmployeeFormState, boolean>> = {};
   @State() saving: boolean = false;
   @State() errorMessage: string = '';
   @State() successMessage: string = '';
   @State() createdProfile: EmployeeProfile | undefined;
+  @State() editingProfile: EmployeeProfile | undefined;
 
   @Event({ eventName: 'employee-created' }) employeeCreated: EventEmitter<EmployeeProfile>;
+  @Event({ eventName: 'employee-updated' }) employeeUpdated: EventEmitter<EmployeeProfile>;
+  @Event({ eventName: 'employee-edit-cancelled' }) employeeEditCancelled: EventEmitter<string>;
+
+  componentWillLoad() {
+    this.loadEditProfile(this.editEmployeeId);
+  }
+
+  @Watch('editEmployeeId')
+  onEditEmployeeIdChanged(employeeId: string) {
+    this.loadEditProfile(employeeId);
+  }
+
+  private loadEditProfile(employeeId: string) {
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.touched = {};
+    this.createdProfile = undefined;
+
+    if (!employeeId) {
+      this.editingProfile = undefined;
+      this.form = emptyForm();
+      return;
+    }
+
+    try {
+      const profile = findEmployeeProfile(employeeId);
+      if (!profile) {
+        throw new Error('Profil zamestnanca sa nenašiel.');
+      }
+
+      this.editingProfile = profile;
+      this.form = profileToForm(profile);
+    } catch (e: unknown) {
+      this.editingProfile = undefined;
+      this.form = emptyForm();
+      this.errorMessage = e instanceof Error ? e.message : 'Nepodarilo sa načítať profil zamestnanca.';
+    }
+  }
 
   private update<K extends keyof EmployeeFormState>(key: K, value: EmployeeFormState[K]) {
     this.form = { ...this.form, [key]: value };
@@ -97,10 +159,15 @@ export class EmployeeCreate {
     return Object.keys(this.fieldErrors()).length === 0;
   }
 
+  private isEditMode(): boolean {
+    return !!this.editingProfile;
+  }
+
   private buildProfile(): EmployeeProfile {
     const now = new Date();
+    const editing = this.editingProfile;
     return {
-      id: `EMP-${now.getTime().toString(36).toUpperCase()}`,
+      id: editing?.id ?? `EMP-${now.getTime().toString(36).toUpperCase()}`,
       firstName: this.form.firstName.trim(),
       lastName: this.form.lastName.trim(),
       birthDate: this.form.birthDate,
@@ -114,7 +181,8 @@ export class EmployeeCreate {
       certificates: this.certificateList(),
       note: this.form.note.trim() || undefined,
       status: 'active',
-      createdAt: now.toISOString(),
+      createdAt: editing?.createdAt ?? now.toISOString(),
+      updatedAt: editing ? now.toISOString() : undefined,
     };
   }
 
@@ -130,12 +198,19 @@ export class EmployeeCreate {
     this.saving = true;
     try {
       const profile = this.buildProfile();
-      appendEmployeeProfile(profile);
-      this.createdProfile = profile;
-      this.form = emptyForm();
-      this.touched = {};
-      this.successMessage = `Profil ${profile.firstName} ${profile.lastName} bol vytvorený.`;
-      this.employeeCreated.emit(profile);
+      if (this.isEditMode()) {
+        updateEmployeeProfile(profile);
+        this.editingProfile = profile;
+        this.successMessage = `Profil ${employeeFullName(profile)} bol aktualizovaný.`;
+        this.employeeUpdated.emit(profile);
+      } else {
+        appendEmployeeProfile(profile);
+        this.createdProfile = profile;
+        this.form = emptyForm();
+        this.touched = {};
+        this.successMessage = `Profil ${employeeFullName(profile)} bol vytvorený.`;
+        this.employeeCreated.emit(profile);
+      }
     } catch (e: unknown) {
       this.errorMessage = e instanceof Error ? e.message : 'Nepodarilo sa uložiť profil zamestnanca.';
     } finally {
@@ -150,26 +225,51 @@ export class EmployeeCreate {
     };
   }
 
+  private resetForm = () => {
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.touched = {};
+
+    if (this.editingProfile) {
+      this.form = profileToForm(this.editingProfile);
+      return;
+    }
+
+    this.form = emptyForm();
+  };
+
+  private cancelEdit = () => {
+    const employeeId = this.editingProfile?.id ?? '';
+    this.editingProfile = undefined;
+    this.form = emptyForm();
+    this.touched = {};
+    this.successMessage = '';
+    this.errorMessage = '';
+    this.employeeEditCancelled.emit(employeeId);
+  };
+
   render() {
     const errs = this.fieldErrors();
     const showErr = (key: keyof EmployeeFormState) => this.touched[key] ? errs[key] : undefined;
     const valid = this.isValid();
+    const editMode = this.isEditMode();
 
     return (
       <Host>
         <section class="hero">
           <div>
             <p class="eyebrow">HR agenda nemocnice</p>
-            <h2>Nový zamestnanec</h2>
+            <h2>{editMode ? 'Upraviť zamestnanca' : 'Nový zamestnanec'}</h2>
             <p class="intro">
-              Vytvorte profil so základnými osobnými údajmi, profesijnou kvalifikáciou
-              a certifikátmi pripravenými pre neskoršie priradenia a evidenciu výkonov.
+              {editMode
+                ? 'Aktualizujte pozíciu, kontaktné údaje, kvalifikáciu alebo certifikáty pri personálnych zmenách.'
+                : 'Vytvorte profil so základnými osobnými údajmi, profesijnou kvalifikáciou a certifikátmi pripravenými pre neskoršie priradenia a evidenciu výkonov.'}
             </p>
           </div>
           <div class="status-card">
-            <md-icon>clinical_notes</md-icon>
-            <span>Create</span>
-            <strong>Profil zamestnanca</strong>
+            <md-icon>{editMode ? 'manage_accounts' : 'clinical_notes'}</md-icon>
+            <span>{editMode ? 'Update' : 'Create'}</span>
+            <strong>{editMode ? this.editingProfile?.id : 'Profil zamestnanca'}</strong>
           </div>
         </section>
 
@@ -319,14 +419,20 @@ export class EmployeeCreate {
         ) : null}
 
         <div class="actions">
-          <md-outlined-button onClick={() => { this.form = emptyForm(); this.touched = {}; this.successMessage = ''; }}>
+          {editMode ? (
+            <md-outlined-button onClick={this.cancelEdit}>
+              <md-icon slot="icon">close</md-icon>
+              Zrušiť úpravu
+            </md-outlined-button>
+          ) : null}
+          <md-outlined-button onClick={this.resetForm}>
             <md-icon slot="icon">restart_alt</md-icon>
-            Vyčistiť
+            {editMode ? 'Obnoviť pôvodné údaje' : 'Vyčistiť'}
           </md-outlined-button>
           <span class="stretch-fill"></span>
           <md-filled-button disabled={!valid || this.saving} onClick={this.handleStore}>
             <md-icon slot="icon">save</md-icon>
-            Vytvoriť profil
+            {editMode ? 'Uložiť zmeny' : 'Vytvoriť profil'}
           </md-filled-button>
         </div>
       </Host>
