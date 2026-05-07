@@ -1,0 +1,12 @@
+:host {
+  display: block;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+employee-create {
+  display: block;
+  margin-top: 12px;
+  padding-top: 24px;
+  border-top: 1px solid var(--md-sys-color-outline-variant, #e0e0e0);
+}

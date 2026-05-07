@@ -1,4 +1,5 @@
-import { Component, Host, State, h } from '@stencil/core';
+import { Component, Event, EventEmitter, Host, State, h } from '@stencil/core';
+import { appendEmployeeProfile, EmployeeProfile } from '../../utils/employee-store';
 
 interface EmployeeFormState {
   firstName: string;
@@ -14,26 +15,6 @@ interface EmployeeFormState {
   certificates: string;
   note: string;
 }
-
-interface EmployeeProfile {
-  id: string;
-  firstName: string;
-  lastName: string;
-  birthDate: string;
-  email?: string;
-  phone?: string;
-  position: string;
-  department?: string;
-  specialization: string;
-  qualification: string;
-  employmentStartDate: string;
-  certificates: string[];
-  note?: string;
-  status: 'active';
-  createdAt: string;
-}
-
-const storageKey = 'dhk-ambulance-employees';
 
 const emptyForm = (): EmployeeFormState => ({
   firstName: '',
@@ -73,6 +54,8 @@ export class EmployeeCreate {
   @State() errorMessage: string = '';
   @State() successMessage: string = '';
   @State() createdProfile: EmployeeProfile | undefined;
+
+  @Event({ eventName: 'employee-created' }) employeeCreated: EventEmitter<EmployeeProfile>;
 
   private update<K extends keyof EmployeeFormState>(key: K, value: EmployeeFormState[K]) {
     this.form = { ...this.form, [key]: value };
@@ -135,18 +118,6 @@ export class EmployeeCreate {
     };
   }
 
-  private loadStoredProfiles(): EmployeeProfile[] {
-    const raw = window.localStorage.getItem(storageKey);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  }
-
-  private storeProfile(profile: EmployeeProfile) {
-    const profiles = this.loadStoredProfiles();
-    window.localStorage.setItem(storageKey, JSON.stringify([...profiles, profile]));
-  }
-
   private handleStore = async () => {
     const allTouched: Partial<Record<keyof EmployeeFormState, boolean>> = {};
     for (const field of requiredFields) allTouched[field] = true;
@@ -159,11 +130,12 @@ export class EmployeeCreate {
     this.saving = true;
     try {
       const profile = this.buildProfile();
-      this.storeProfile(profile);
+      appendEmployeeProfile(profile);
       this.createdProfile = profile;
       this.form = emptyForm();
       this.touched = {};
       this.successMessage = `Profil ${profile.firstName} ${profile.lastName} bol vytvorený.`;
+      this.employeeCreated.emit(profile);
     } catch (e: unknown) {
       this.errorMessage = e instanceof Error ? e.message : 'Nepodarilo sa uložiť profil zamestnanca.';
     } finally {

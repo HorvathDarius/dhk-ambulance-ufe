@@ -5,6 +5,8 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { EmployeeProfile } from "./utils/employee-store";
+export { EmployeeProfile } from "./utils/employee-store";
 export namespace Components {
     interface AssignmentApp {
         /**
@@ -30,6 +32,14 @@ export namespace Components {
         "apiBase": string;
     }
     interface EmployeeCreate {
+    }
+    interface EmployeeList {
+        /**
+          * @default 0
+         */
+        "refreshToken": number;
+    }
+    interface EmployeeWorkspace {
     }
     interface MainComponent {
     }
@@ -64,6 +74,10 @@ export interface AssignmentEditorCustomEvent<T> extends CustomEvent<T> {
 export interface AssignmentListCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLAssignmentListElement;
+}
+export interface EmployeeCreateCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLEmployeeCreateElement;
 }
 export interface VykonEditorCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -114,11 +128,34 @@ declare global {
         prototype: HTMLAssignmentListElement;
         new (): HTMLAssignmentListElement;
     };
+    interface HTMLEmployeeCreateElementEventMap {
+        "employee-created": EmployeeProfile;
+    }
     interface HTMLEmployeeCreateElement extends Components.EmployeeCreate, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLEmployeeCreateElementEventMap>(type: K, listener: (this: HTMLEmployeeCreateElement, ev: EmployeeCreateCustomEvent<HTMLEmployeeCreateElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLEmployeeCreateElementEventMap>(type: K, listener: (this: HTMLEmployeeCreateElement, ev: EmployeeCreateCustomEvent<HTMLEmployeeCreateElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
     var HTMLEmployeeCreateElement: {
         prototype: HTMLEmployeeCreateElement;
         new (): HTMLEmployeeCreateElement;
+    };
+    interface HTMLEmployeeListElement extends Components.EmployeeList, HTMLStencilElement {
+    }
+    var HTMLEmployeeListElement: {
+        prototype: HTMLEmployeeListElement;
+        new (): HTMLEmployeeListElement;
+    };
+    interface HTMLEmployeeWorkspaceElement extends Components.EmployeeWorkspace, HTMLStencilElement {
+    }
+    var HTMLEmployeeWorkspaceElement: {
+        prototype: HTMLEmployeeWorkspaceElement;
+        new (): HTMLEmployeeWorkspaceElement;
     };
     interface HTMLMainComponentElement extends Components.MainComponent, HTMLStencilElement {
     }
@@ -171,6 +208,8 @@ declare global {
         "assignment-editor": HTMLAssignmentEditorElement;
         "assignment-list": HTMLAssignmentListElement;
         "employee-create": HTMLEmployeeCreateElement;
+        "employee-list": HTMLEmployeeListElement;
+        "employee-workspace": HTMLEmployeeWorkspaceElement;
         "main-component": HTMLMainComponentElement;
         "vykon-app": HTMLVykonAppElement;
         "vykon-editor": HTMLVykonEditorElement;
@@ -204,6 +243,15 @@ declare namespace LocalJSX {
         "onEntry-clicked"?: (event: AssignmentListCustomEvent<string>) => void;
     }
     interface EmployeeCreate {
+        "onEmployee-created"?: (event: EmployeeCreateCustomEvent<EmployeeProfile>) => void;
+    }
+    interface EmployeeList {
+        /**
+          * @default 0
+         */
+        "refreshToken"?: number;
+    }
+    interface EmployeeWorkspace {
     }
     interface MainComponent {
     }
@@ -244,6 +292,9 @@ declare namespace LocalJSX {
     interface AssignmentListAttributes {
         "apiBase": string;
     }
+    interface EmployeeListAttributes {
+        "refreshToken": number;
+    }
     interface VykonAppAttributes {
         "basePath": string;
         "apiBase": string;
@@ -261,6 +312,8 @@ declare namespace LocalJSX {
         "assignment-editor": Omit<AssignmentEditor, keyof AssignmentEditorAttributes> & { [K in keyof AssignmentEditor & keyof AssignmentEditorAttributes]?: AssignmentEditor[K] } & { [K in keyof AssignmentEditor & keyof AssignmentEditorAttributes as `attr:${K}`]?: AssignmentEditorAttributes[K] } & { [K in keyof AssignmentEditor & keyof AssignmentEditorAttributes as `prop:${K}`]?: AssignmentEditor[K] };
         "assignment-list": Omit<AssignmentList, keyof AssignmentListAttributes> & { [K in keyof AssignmentList & keyof AssignmentListAttributes]?: AssignmentList[K] } & { [K in keyof AssignmentList & keyof AssignmentListAttributes as `attr:${K}`]?: AssignmentListAttributes[K] } & { [K in keyof AssignmentList & keyof AssignmentListAttributes as `prop:${K}`]?: AssignmentList[K] };
         "employee-create": EmployeeCreate;
+        "employee-list": Omit<EmployeeList, keyof EmployeeListAttributes> & { [K in keyof EmployeeList & keyof EmployeeListAttributes]?: EmployeeList[K] } & { [K in keyof EmployeeList & keyof EmployeeListAttributes as `attr:${K}`]?: EmployeeListAttributes[K] } & { [K in keyof EmployeeList & keyof EmployeeListAttributes as `prop:${K}`]?: EmployeeList[K] };
+        "employee-workspace": EmployeeWorkspace;
         "main-component": MainComponent;
         "vykon-app": Omit<VykonApp, keyof VykonAppAttributes> & { [K in keyof VykonApp & keyof VykonAppAttributes]?: VykonApp[K] } & { [K in keyof VykonApp & keyof VykonAppAttributes as `attr:${K}`]?: VykonAppAttributes[K] } & { [K in keyof VykonApp & keyof VykonAppAttributes as `prop:${K}`]?: VykonApp[K] };
         "vykon-editor": Omit<VykonEditor, keyof VykonEditorAttributes> & { [K in keyof VykonEditor & keyof VykonEditorAttributes]?: VykonEditor[K] } & { [K in keyof VykonEditor & keyof VykonEditorAttributes as `attr:${K}`]?: VykonEditorAttributes[K] } & { [K in keyof VykonEditor & keyof VykonEditorAttributes as `prop:${K}`]?: VykonEditor[K] };
@@ -275,6 +328,8 @@ declare module "@stencil/core" {
             "assignment-editor": LocalJSX.IntrinsicElements["assignment-editor"] & JSXBase.HTMLAttributes<HTMLAssignmentEditorElement>;
             "assignment-list": LocalJSX.IntrinsicElements["assignment-list"] & JSXBase.HTMLAttributes<HTMLAssignmentListElement>;
             "employee-create": LocalJSX.IntrinsicElements["employee-create"] & JSXBase.HTMLAttributes<HTMLEmployeeCreateElement>;
+            "employee-list": LocalJSX.IntrinsicElements["employee-list"] & JSXBase.HTMLAttributes<HTMLEmployeeListElement>;
+            "employee-workspace": LocalJSX.IntrinsicElements["employee-workspace"] & JSXBase.HTMLAttributes<HTMLEmployeeWorkspaceElement>;
             "main-component": LocalJSX.IntrinsicElements["main-component"] & JSXBase.HTMLAttributes<HTMLMainComponentElement>;
             "vykon-app": LocalJSX.IntrinsicElements["vykon-app"] & JSXBase.HTMLAttributes<HTMLVykonAppElement>;
             "vykon-editor": LocalJSX.IntrinsicElements["vykon-editor"] & JSXBase.HTMLAttributes<HTMLVykonEditorElement>;

@@ -52,7 +52,7 @@ describe('vykon-app', () => {
     expect(tabs[2].hasAttribute('active')).toBe(true);
   });
 
-  it('mounts employee-create, assignment-list, and vykon-list inside their panels', async () => {
+  it('mounts employee-workspace, assignment-list, and vykon-list inside their panels', async () => {
     const page = await newSpecPage({
       url: 'http://localhost/',
       components: [VykonApp],
@@ -61,7 +61,7 @@ describe('vykon-app', () => {
     (page.win as any).navigation = new EventTarget();
     const panels = page.root.shadowRoot.querySelectorAll('section.tab-panel');
     expect(panels.length).toEqual(3);
-    expect(panels[0].querySelector('employee-create')).toBeTruthy();
+    expect(panels[0].querySelector('employee-workspace')).toBeTruthy();
     expect(panels[1].querySelector('assignment-list')).toBeTruthy();
     expect(panels[2].querySelector('vykon-list')).toBeTruthy();
 

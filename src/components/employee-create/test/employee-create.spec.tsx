@@ -1,9 +1,10 @@
 import { newSpecPage } from '@stencil/core/testing';
 import { EmployeeCreate } from '../employee-create';
+import { employeeStorageKey } from '../../../utils/employee-store';
 
 describe('employee-create', () => {
   beforeEach(() => {
-    window.localStorage.removeItem('dhk-ambulance-employees');
+    window.localStorage.removeItem(employeeStorageKey);
   });
 
   it('renders employee create form', async () => {
@@ -51,7 +52,7 @@ describe('employee-create', () => {
     await instance.handleStore();
     await page.waitForChanges();
 
-    const stored = JSON.parse(window.localStorage.getItem('dhk-ambulance-employees') ?? '[]');
+    const stored = JSON.parse(window.localStorage.getItem(employeeStorageKey) ?? '[]');
     expect(stored).toHaveLength(1);
     expect(stored[0].firstName).toEqual('Anna');
     expect(stored[0].certificates).toEqual(['ALS', 'BLS']);

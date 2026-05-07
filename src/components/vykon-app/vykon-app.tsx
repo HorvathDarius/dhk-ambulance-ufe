@@ -87,7 +87,7 @@ export class VykonApp {
         </md-tabs>
 
         <section class="tab-panel" hidden={this.activeTabIndex !== 0}>
-          <employee-create></employee-create>
+          <employee-workspace></employee-workspace>
         </section>
 
         <section class="tab-panel" hidden={this.activeTabIndex !== 1}>
