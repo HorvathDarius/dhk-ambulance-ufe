@@ -12,6 +12,15 @@
           "supportsES6": "true",
           "withInterfaces": true
         }
+      },
+      "ambulance-assignment": {
+        "generatorName": "typescript-fetch",
+        "glob": "api/assignment.openapi.yaml",
+        "output": "#{cwd}/src/api/assignment",
+        "additionalProperties": {
+          "supportsES6": "true",
+          "withInterfaces": true
+        }
       }
     }
   }
