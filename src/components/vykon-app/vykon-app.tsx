@@ -81,13 +81,13 @@ export class VykonApp {
           activeTabIndex={this.activeTabIndex}
           onChange={this.handleTabChange}
         >
-          <md-primary-tab active={this.activeTabIndex === 0}>Task 1</md-primary-tab>
+          <md-primary-tab active={this.activeTabIndex === 0}>Zamestnanci</md-primary-tab>
           <md-primary-tab active={this.activeTabIndex === 1}>Assignments</md-primary-tab>
           <md-primary-tab active={this.activeTabIndex === 2}>Performance Records</md-primary-tab>
         </md-tabs>
 
         <section class="tab-panel" hidden={this.activeTabIndex !== 0}>
-          <h2 class="placeholder">Task 1</h2>
+          <employee-create></employee-create>
         </section>
 
         <section class="tab-panel" hidden={this.activeTabIndex !== 1}>

@@ -29,6 +29,8 @@ export namespace Components {
          */
         "apiBase": string;
     }
+    interface EmployeeCreate {
+    }
     interface MainComponent {
     }
     interface VykonApp {
@@ -112,6 +114,12 @@ declare global {
         prototype: HTMLAssignmentListElement;
         new (): HTMLAssignmentListElement;
     };
+    interface HTMLEmployeeCreateElement extends Components.EmployeeCreate, HTMLStencilElement {
+    }
+    var HTMLEmployeeCreateElement: {
+        prototype: HTMLEmployeeCreateElement;
+        new (): HTMLEmployeeCreateElement;
+    };
     interface HTMLMainComponentElement extends Components.MainComponent, HTMLStencilElement {
     }
     var HTMLMainComponentElement: {
@@ -162,6 +170,7 @@ declare global {
         "assignment-app": HTMLAssignmentAppElement;
         "assignment-editor": HTMLAssignmentEditorElement;
         "assignment-list": HTMLAssignmentListElement;
+        "employee-create": HTMLEmployeeCreateElement;
         "main-component": HTMLMainComponentElement;
         "vykon-app": HTMLVykonAppElement;
         "vykon-editor": HTMLVykonEditorElement;
@@ -193,6 +202,8 @@ declare namespace LocalJSX {
          */
         "apiBase"?: string;
         "onEntry-clicked"?: (event: AssignmentListCustomEvent<string>) => void;
+    }
+    interface EmployeeCreate {
     }
     interface MainComponent {
     }
@@ -249,6 +260,7 @@ declare namespace LocalJSX {
         "assignment-app": Omit<AssignmentApp, keyof AssignmentAppAttributes> & { [K in keyof AssignmentApp & keyof AssignmentAppAttributes]?: AssignmentApp[K] } & { [K in keyof AssignmentApp & keyof AssignmentAppAttributes as `attr:${K}`]?: AssignmentAppAttributes[K] } & { [K in keyof AssignmentApp & keyof AssignmentAppAttributes as `prop:${K}`]?: AssignmentApp[K] };
         "assignment-editor": Omit<AssignmentEditor, keyof AssignmentEditorAttributes> & { [K in keyof AssignmentEditor & keyof AssignmentEditorAttributes]?: AssignmentEditor[K] } & { [K in keyof AssignmentEditor & keyof AssignmentEditorAttributes as `attr:${K}`]?: AssignmentEditorAttributes[K] } & { [K in keyof AssignmentEditor & keyof AssignmentEditorAttributes as `prop:${K}`]?: AssignmentEditor[K] };
         "assignment-list": Omit<AssignmentList, keyof AssignmentListAttributes> & { [K in keyof AssignmentList & keyof AssignmentListAttributes]?: AssignmentList[K] } & { [K in keyof AssignmentList & keyof AssignmentListAttributes as `attr:${K}`]?: AssignmentListAttributes[K] } & { [K in keyof AssignmentList & keyof AssignmentListAttributes as `prop:${K}`]?: AssignmentList[K] };
+        "employee-create": EmployeeCreate;
         "main-component": MainComponent;
         "vykon-app": Omit<VykonApp, keyof VykonAppAttributes> & { [K in keyof VykonApp & keyof VykonAppAttributes]?: VykonApp[K] } & { [K in keyof VykonApp & keyof VykonAppAttributes as `attr:${K}`]?: VykonAppAttributes[K] } & { [K in keyof VykonApp & keyof VykonAppAttributes as `prop:${K}`]?: VykonApp[K] };
         "vykon-editor": Omit<VykonEditor, keyof VykonEditorAttributes> & { [K in keyof VykonEditor & keyof VykonEditorAttributes]?: VykonEditor[K] } & { [K in keyof VykonEditor & keyof VykonEditorAttributes as `attr:${K}`]?: VykonEditorAttributes[K] } & { [K in keyof VykonEditor & keyof VykonEditorAttributes as `prop:${K}`]?: VykonEditor[K] };
@@ -262,6 +274,7 @@ declare module "@stencil/core" {
             "assignment-app": LocalJSX.IntrinsicElements["assignment-app"] & JSXBase.HTMLAttributes<HTMLAssignmentAppElement>;
             "assignment-editor": LocalJSX.IntrinsicElements["assignment-editor"] & JSXBase.HTMLAttributes<HTMLAssignmentEditorElement>;
             "assignment-list": LocalJSX.IntrinsicElements["assignment-list"] & JSXBase.HTMLAttributes<HTMLAssignmentListElement>;
+            "employee-create": LocalJSX.IntrinsicElements["employee-create"] & JSXBase.HTMLAttributes<HTMLEmployeeCreateElement>;
             "main-component": LocalJSX.IntrinsicElements["main-component"] & JSXBase.HTMLAttributes<HTMLMainComponentElement>;
             "vykon-app": LocalJSX.IntrinsicElements["vykon-app"] & JSXBase.HTMLAttributes<HTMLVykonAppElement>;
             "vykon-editor": LocalJSX.IntrinsicElements["vykon-editor"] & JSXBase.HTMLAttributes<HTMLVykonEditorElement>;

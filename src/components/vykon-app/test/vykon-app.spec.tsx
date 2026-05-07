@@ -43,7 +43,7 @@ describe('vykon-app', () => {
 
     const tabs = root.querySelectorAll('md-primary-tab');
     expect(tabs.length).toEqual(3);
-    expect(tabs[0].textContent).toEqual('Task 1');
+    expect(tabs[0].textContent).toEqual('Zamestnanci');
     expect(tabs[1].textContent).toEqual('Assignments');
     expect(tabs[2].textContent).toEqual('Performance Records');
 
@@ -52,7 +52,7 @@ describe('vykon-app', () => {
     expect(tabs[2].hasAttribute('active')).toBe(true);
   });
 
-  it('mounts vykon-list and assignment-list inside their panels and keeps a placeholder for Task 1', async () => {
+  it('mounts employee-create, assignment-list, and vykon-list inside their panels', async () => {
     const page = await newSpecPage({
       url: 'http://localhost/',
       components: [VykonApp],
@@ -61,7 +61,7 @@ describe('vykon-app', () => {
     (page.win as any).navigation = new EventTarget();
     const panels = page.root.shadowRoot.querySelectorAll('section.tab-panel');
     expect(panels.length).toEqual(3);
-    expect(panels[0].querySelector('.placeholder').textContent).toEqual('Task 1');
+    expect(panels[0].querySelector('employee-create')).toBeTruthy();
     expect(panels[1].querySelector('assignment-list')).toBeTruthy();
     expect(panels[2].querySelector('vykon-list')).toBeTruthy();
 
