@@ -84,22 +84,24 @@ export class AssignmentList {
           <md-list>
             {this.assignments.map((a, idx) => (
               <Fragment>
-                <md-list-item key={a.id}>
+                <md-list-item
+                  key={a.id}
+                  type="button"
+                  onClick={() => this.entryClicked.emit(String(a.id))}
+                >
                   <div slot="headline">{a.employeeName} → {a.departmentName}</div>
                   <div slot="supporting-text">
                     {this.formatRange(a)}
                     {a.role ? <span> · {a.role}</span> : null}
                   </div>
-                  <div slot="end" class="actions">
-                    <md-icon-button
-                      aria-label="Upraviť priradenie"
-                      onClick={() => this.entryClicked.emit(String(a.id))}
-                    >
-                      <md-icon>edit</md-icon>
-                    </md-icon-button>
+                  <div
+                    slot="end"
+                    class="actions"
+                    onClick={(e: Event) => e.stopPropagation()}
+                  >
                     <md-icon-button
                       aria-label="Zrušiť priradenie"
-                      onClick={() => this.handleDelete(a.id!)}
+                      onClick={(e: Event) => { e.stopPropagation(); this.handleDelete(a.id!); }}
                     >
                       <md-icon>delete</md-icon>
                     </md-icon-button>
