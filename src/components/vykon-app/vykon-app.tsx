@@ -38,19 +38,26 @@ export class VykonApp {
   };
 
   render() {
-    let element = 'list';
-    let entryId = '@new';
-    if (this.relativePath.startsWith('editor/')) {
-      element = 'editor';
-      entryId = this.relativePath.split('/')[1];
-    }
-
     const navigate = (path: string) => {
       const absolute = new URL(path, new URL(this.basePath, document.baseURI)).pathname;
       window.navigation.navigate(absolute);
     };
 
-    if (element === 'editor') {
+    if (this.relativePath.startsWith('assignment/editor/')) {
+      const entryId = this.relativePath.split('/')[2] ?? '@new';
+      return (
+        <Host>
+          <assignment-editor
+            entry-id={entryId}
+            api-base={this.apiBase}
+            oneditor-closed={() => navigate('./assignment')}
+          ></assignment-editor>
+        </Host>
+      );
+    }
+
+    if (this.relativePath.startsWith('editor/')) {
+      const entryId = this.relativePath.split('/')[1] ?? '@new';
       return (
         <Host>
           <vykon-editor
@@ -75,7 +82,7 @@ export class VykonApp {
           onChange={this.handleTabChange}
         >
           <md-primary-tab active={this.activeTabIndex === 0}>Task 1</md-primary-tab>
-          <md-primary-tab active={this.activeTabIndex === 1}>Task 2</md-primary-tab>
+          <md-primary-tab active={this.activeTabIndex === 1}>Assignments</md-primary-tab>
           <md-primary-tab active={this.activeTabIndex === 2}>Performance Records</md-primary-tab>
         </md-tabs>
 
@@ -84,7 +91,10 @@ export class VykonApp {
         </section>
 
         <section class="tab-panel" hidden={this.activeTabIndex !== 1}>
-          <h2 class="placeholder">Task 2</h2>
+          <assignment-list
+            api-base={this.apiBase}
+            onentry-clicked={(ev: CustomEvent<string>) => navigate('./assignment/editor/' + ev.detail)}
+          ></assignment-list>
         </section>
 
         <section class="tab-panel" hidden={this.activeTabIndex !== 2}>
