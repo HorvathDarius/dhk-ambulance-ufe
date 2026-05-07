@@ -6,6 +6,29 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 export namespace Components {
+    interface AssignmentApp {
+        /**
+          * @default ''
+         */
+        "apiBase": string;
+        /**
+          * @default ''
+         */
+        "basePath": string;
+    }
+    interface AssignmentEditor {
+        /**
+          * @default ''
+         */
+        "apiBase": string;
+        "entryId": string;
+    }
+    interface AssignmentList {
+        /**
+          * @default ''
+         */
+        "apiBase": string;
+    }
     interface MainComponent {
     }
     interface VykonApp {
@@ -32,6 +55,14 @@ export namespace Components {
         "apiBase": string;
     }
 }
+export interface AssignmentEditorCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLAssignmentEditorElement;
+}
+export interface AssignmentListCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLAssignmentListElement;
+}
 export interface VykonEditorCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLVykonEditorElement;
@@ -41,6 +72,46 @@ export interface VykonListCustomEvent<T> extends CustomEvent<T> {
     target: HTMLVykonListElement;
 }
 declare global {
+    interface HTMLAssignmentAppElement extends Components.AssignmentApp, HTMLStencilElement {
+    }
+    var HTMLAssignmentAppElement: {
+        prototype: HTMLAssignmentAppElement;
+        new (): HTMLAssignmentAppElement;
+    };
+    interface HTMLAssignmentEditorElementEventMap {
+        "editor-closed": string;
+    }
+    interface HTMLAssignmentEditorElement extends Components.AssignmentEditor, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLAssignmentEditorElementEventMap>(type: K, listener: (this: HTMLAssignmentEditorElement, ev: AssignmentEditorCustomEvent<HTMLAssignmentEditorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLAssignmentEditorElementEventMap>(type: K, listener: (this: HTMLAssignmentEditorElement, ev: AssignmentEditorCustomEvent<HTMLAssignmentEditorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLAssignmentEditorElement: {
+        prototype: HTMLAssignmentEditorElement;
+        new (): HTMLAssignmentEditorElement;
+    };
+    interface HTMLAssignmentListElementEventMap {
+        "entry-clicked": string;
+    }
+    interface HTMLAssignmentListElement extends Components.AssignmentList, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLAssignmentListElementEventMap>(type: K, listener: (this: HTMLAssignmentListElement, ev: AssignmentListCustomEvent<HTMLAssignmentListElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLAssignmentListElementEventMap>(type: K, listener: (this: HTMLAssignmentListElement, ev: AssignmentListCustomEvent<HTMLAssignmentListElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLAssignmentListElement: {
+        prototype: HTMLAssignmentListElement;
+        new (): HTMLAssignmentListElement;
+    };
     interface HTMLMainComponentElement extends Components.MainComponent, HTMLStencilElement {
     }
     var HTMLMainComponentElement: {
@@ -88,6 +159,9 @@ declare global {
         new (): HTMLVykonListElement;
     };
     interface HTMLElementTagNameMap {
+        "assignment-app": HTMLAssignmentAppElement;
+        "assignment-editor": HTMLAssignmentEditorElement;
+        "assignment-list": HTMLAssignmentListElement;
         "main-component": HTMLMainComponentElement;
         "vykon-app": HTMLVykonAppElement;
         "vykon-editor": HTMLVykonEditorElement;
@@ -95,6 +169,31 @@ declare global {
     }
 }
 declare namespace LocalJSX {
+    interface AssignmentApp {
+        /**
+          * @default ''
+         */
+        "apiBase"?: string;
+        /**
+          * @default ''
+         */
+        "basePath"?: string;
+    }
+    interface AssignmentEditor {
+        /**
+          * @default ''
+         */
+        "apiBase"?: string;
+        "entryId"?: string;
+        "onEditor-closed"?: (event: AssignmentEditorCustomEvent<string>) => void;
+    }
+    interface AssignmentList {
+        /**
+          * @default ''
+         */
+        "apiBase"?: string;
+        "onEntry-clicked"?: (event: AssignmentListCustomEvent<string>) => void;
+    }
     interface MainComponent {
     }
     interface VykonApp {
@@ -123,6 +222,17 @@ declare namespace LocalJSX {
         "onEntry-clicked"?: (event: VykonListCustomEvent<string>) => void;
     }
 
+    interface AssignmentAppAttributes {
+        "basePath": string;
+        "apiBase": string;
+    }
+    interface AssignmentEditorAttributes {
+        "entryId": string;
+        "apiBase": string;
+    }
+    interface AssignmentListAttributes {
+        "apiBase": string;
+    }
     interface VykonAppAttributes {
         "basePath": string;
         "apiBase": string;
@@ -136,6 +246,9 @@ declare namespace LocalJSX {
     }
 
     interface IntrinsicElements {
+        "assignment-app": Omit<AssignmentApp, keyof AssignmentAppAttributes> & { [K in keyof AssignmentApp & keyof AssignmentAppAttributes]?: AssignmentApp[K] } & { [K in keyof AssignmentApp & keyof AssignmentAppAttributes as `attr:${K}`]?: AssignmentAppAttributes[K] } & { [K in keyof AssignmentApp & keyof AssignmentAppAttributes as `prop:${K}`]?: AssignmentApp[K] };
+        "assignment-editor": Omit<AssignmentEditor, keyof AssignmentEditorAttributes> & { [K in keyof AssignmentEditor & keyof AssignmentEditorAttributes]?: AssignmentEditor[K] } & { [K in keyof AssignmentEditor & keyof AssignmentEditorAttributes as `attr:${K}`]?: AssignmentEditorAttributes[K] } & { [K in keyof AssignmentEditor & keyof AssignmentEditorAttributes as `prop:${K}`]?: AssignmentEditor[K] };
+        "assignment-list": Omit<AssignmentList, keyof AssignmentListAttributes> & { [K in keyof AssignmentList & keyof AssignmentListAttributes]?: AssignmentList[K] } & { [K in keyof AssignmentList & keyof AssignmentListAttributes as `attr:${K}`]?: AssignmentListAttributes[K] } & { [K in keyof AssignmentList & keyof AssignmentListAttributes as `prop:${K}`]?: AssignmentList[K] };
         "main-component": MainComponent;
         "vykon-app": Omit<VykonApp, keyof VykonAppAttributes> & { [K in keyof VykonApp & keyof VykonAppAttributes]?: VykonApp[K] } & { [K in keyof VykonApp & keyof VykonAppAttributes as `attr:${K}`]?: VykonAppAttributes[K] } & { [K in keyof VykonApp & keyof VykonAppAttributes as `prop:${K}`]?: VykonApp[K] };
         "vykon-editor": Omit<VykonEditor, keyof VykonEditorAttributes> & { [K in keyof VykonEditor & keyof VykonEditorAttributes]?: VykonEditor[K] } & { [K in keyof VykonEditor & keyof VykonEditorAttributes as `attr:${K}`]?: VykonEditorAttributes[K] } & { [K in keyof VykonEditor & keyof VykonEditorAttributes as `prop:${K}`]?: VykonEditor[K] };
@@ -146,6 +259,9 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "assignment-app": LocalJSX.IntrinsicElements["assignment-app"] & JSXBase.HTMLAttributes<HTMLAssignmentAppElement>;
+            "assignment-editor": LocalJSX.IntrinsicElements["assignment-editor"] & JSXBase.HTMLAttributes<HTMLAssignmentEditorElement>;
+            "assignment-list": LocalJSX.IntrinsicElements["assignment-list"] & JSXBase.HTMLAttributes<HTMLAssignmentListElement>;
             "main-component": LocalJSX.IntrinsicElements["main-component"] & JSXBase.HTMLAttributes<HTMLMainComponentElement>;
             "vykon-app": LocalJSX.IntrinsicElements["vykon-app"] & JSXBase.HTMLAttributes<HTMLVykonAppElement>;
             "vykon-editor": LocalJSX.IntrinsicElements["vykon-editor"] & JSXBase.HTMLAttributes<HTMLVykonEditorElement>;
