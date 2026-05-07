@@ -1,5 +1,4 @@
-import { Component, Host, State, h } from '@stencil/core';
-import { archiveEmployeeProfile } from '../../utils/employee-store';
+import { Component, Host, Prop, State, h } from '@stencil/core';
 
 @Component({
   tag: 'employee-workspace',
@@ -7,8 +6,10 @@ import { archiveEmployeeProfile } from '../../utils/employee-store';
   shadow: true,
 })
 export class EmployeeWorkspace {
+  @Prop() apiBase: string = '';
+
   @State() refreshToken = 0;
-  @State() editEmployeeId = '';
+  @State() editEmployeeId = 0;
 
   private handleEmployeeCreated = () => {
     this.refreshToken += 1;
@@ -16,21 +17,20 @@ export class EmployeeWorkspace {
 
   private handleEmployeeUpdated = () => {
     this.refreshToken += 1;
-    this.editEmployeeId = '';
+    this.editEmployeeId = 0;
   };
 
-  private handleEditRequested = (event: CustomEvent<string>) => {
+  private handleEditRequested = (event: CustomEvent<number>) => {
     this.editEmployeeId = event.detail;
   };
 
   private handleEditCancelled = () => {
-    this.editEmployeeId = '';
+    this.editEmployeeId = 0;
   };
 
-  private handleArchiveRequested = (event: CustomEvent<string>) => {
-    archiveEmployeeProfile(event.detail);
+  private handleArchiveRequested = (event: CustomEvent<number>) => {
     if (this.editEmployeeId === event.detail) {
-      this.editEmployeeId = '';
+      this.editEmployeeId = 0;
     }
     this.refreshToken += 1;
   };
@@ -39,11 +39,13 @@ export class EmployeeWorkspace {
     return (
       <Host>
         <employee-list
+          apiBase={this.apiBase}
           refreshToken={this.refreshToken}
           onEmployee-edit-requested={this.handleEditRequested}
           onEmployee-archive-requested={this.handleArchiveRequested}
         ></employee-list>
         <employee-create
+          apiBase={this.apiBase}
           editEmployeeId={this.editEmployeeId}
           onEmployee-created={this.handleEmployeeCreated}
           onEmployee-updated={this.handleEmployeeUpdated}

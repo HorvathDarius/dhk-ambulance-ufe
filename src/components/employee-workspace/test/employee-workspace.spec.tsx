@@ -1,6 +1,6 @@
 import { newSpecPage } from '@stencil/core/testing';
+import { EmployeeProfilesApi } from '../../../api/employee';
 import { EmployeeWorkspace } from '../employee-workspace';
-import { employeeStorageKey } from '../../../utils/employee-store';
 import { EmployeeCreate } from '../../employee-create/employee-create';
 import { EmployeeList } from '../../employee-list/employee-list';
 
@@ -8,7 +8,9 @@ const components = [EmployeeWorkspace, EmployeeCreate, EmployeeList];
 
 describe('employee-workspace', () => {
   beforeEach(() => {
-    window.localStorage.removeItem(employeeStorageKey);
+    jest.restoreAllMocks();
+    jest.spyOn(EmployeeProfilesApi.prototype, 'listEmployeeProfiles')
+      .mockResolvedValue([]);
   });
 
   it('renders employee list and create form', async () => {
@@ -28,10 +30,10 @@ describe('employee-workspace', () => {
     });
 
     const instance = page.rootInstance as any;
-    instance.editEmployeeId = 'EMP-1';
+    instance.editEmployeeId = 1;
     await page.waitForChanges();
 
-    expect((page.root.shadowRoot.querySelector('employee-create') as any).editEmployeeId).toEqual('EMP-1');
+    expect((page.root.shadowRoot.querySelector('employee-create') as any).editEmployeeId).toEqual(1);
   });
 
   it('opens the editor when employee-list requests editing', async () => {
@@ -44,43 +46,25 @@ describe('employee-workspace', () => {
     list.dispatchEvent(new CustomEvent('employee-edit-requested', {
       bubbles: true,
       composed: true,
-      detail: 'EMP-1',
+      detail: 1,
     }));
     await page.waitForChanges();
 
-    expect((page.root.shadowRoot.querySelector('employee-create') as any).editEmployeeId).toEqual('EMP-1');
+    expect((page.root.shadowRoot.querySelector('employee-create') as any).editEmployeeId).toEqual(1);
   });
 
-  it('archives selected employee and refreshes the overview', async () => {
+  it('clears the editor and refreshes the overview after archive', async () => {
     const page = await newSpecPage({
       components,
       html: `<employee-workspace></employee-workspace>`,
     });
-    window.localStorage.setItem(employeeStorageKey, JSON.stringify([
-      {
-        id: 'EMP-1',
-        firstName: 'Anna',
-        lastName: 'Nováková',
-        birthDate: '1988-04-12',
-        position: 'Lekárka',
-        specialization: 'Urgentná medicína',
-        qualification: 'MUDr.',
-        employmentStartDate: '2026-06-01',
-        certificates: ['ALS'],
-        status: 'active',
-        createdAt: '2026-05-07T21:00:00.000Z',
-      },
-    ]));
 
     const instance = page.rootInstance as any;
-    instance.editEmployeeId = 'EMP-1';
-    instance.handleArchiveRequested(new CustomEvent('employee-archive-requested', { detail: 'EMP-1' }));
+    instance.editEmployeeId = 1;
+    instance.handleArchiveRequested(new CustomEvent('employee-archive-requested', { detail: 1 }));
     await page.waitForChanges();
 
-    const stored = JSON.parse(window.localStorage.getItem(employeeStorageKey) ?? '[]');
-    expect(stored[0].status).toEqual('archived');
-    expect(stored[0].archivedAt).toBeTruthy();
-    expect(instance.editEmployeeId).toEqual('');
+    expect(instance.editEmployeeId).toEqual(0);
     expect(instance.refreshToken).toEqual(1);
   });
 });

@@ -1,28 +1,28 @@
 import { newSpecPage } from '@stencil/core/testing';
+import { EmployeeProfilesApi } from '../../../api/employee';
 import { EmployeeCreate } from '../employee-create';
-import { employeeStorageKey } from '../../../utils/employee-store';
 
 const storedProfile = {
-  id: 'EMP-1',
+  id: 1,
   firstName: 'Anna',
   lastName: 'Nováková',
-  birthDate: '1988-04-12',
+  birthDate: new Date('1988-04-12T00:00:00.000Z'),
   email: 'anna.novakova@nemocnica.sk',
   phone: '+421900123456',
   position: 'Lekárka',
   department: 'Urgentný príjem',
   specialization: 'Urgentná medicína',
   qualification: 'MUDr.',
-  employmentStartDate: '2026-06-01',
+  employmentStartDate: new Date('2026-06-01T00:00:00.000Z'),
   certificates: ['ALS', 'BLS'],
   note: 'Nástup po schválení HR.',
   status: 'active',
-  createdAt: '2026-05-07T21:00:00.000Z',
+  createdAt: new Date('2026-05-07T21:00:00.000Z'),
 };
 
 describe('employee-create', () => {
   beforeEach(() => {
-    window.localStorage.removeItem(employeeStorageKey);
+    jest.restoreAllMocks();
   });
 
   it('renders employee create form', async () => {
@@ -45,7 +45,9 @@ describe('employee-create', () => {
     expect(createButton.getAttribute('disabled')).not.toBeNull();
   });
 
-  it('stores a valid employee profile locally', async () => {
+  it('creates a valid employee profile through the API', async () => {
+    const createSpy = jest.spyOn(EmployeeProfilesApi.prototype, 'createEmployeeProfile')
+      .mockResolvedValue(storedProfile as any);
     const page = await newSpecPage({
       components: [EmployeeCreate],
       html: `<employee-create></employee-create>`,
@@ -70,22 +72,32 @@ describe('employee-create', () => {
     await instance.handleStore();
     await page.waitForChanges();
 
-    const stored = JSON.parse(window.localStorage.getItem(employeeStorageKey) ?? '[]');
-    expect(stored).toHaveLength(1);
-    expect(stored[0].firstName).toEqual('Anna');
-    expect(stored[0].certificates).toEqual(['ALS', 'BLS']);
+    expect(createSpy).toHaveBeenCalledWith({
+      employeeProfile: expect.objectContaining({
+        firstName: 'Anna',
+        certificates: ['ALS', 'BLS'],
+      }),
+    });
     expect(instance.successMessage).toContain('Anna Nováková');
   });
 
-  it('loads an existing employee and stores updates locally', async () => {
+  it('loads an existing employee and updates it through the API', async () => {
+    jest.spyOn(EmployeeProfilesApi.prototype, 'getEmployeeProfile')
+      .mockResolvedValue(storedProfile as any);
+    const updateSpy = jest.spyOn(EmployeeProfilesApi.prototype, 'updateEmployeeProfile')
+      .mockResolvedValue({
+        ...storedProfile,
+        position: 'Primárka',
+        phone: '+421900654321',
+        certificates: ['ALS', 'BLS', 'ATLS'],
+      } as any);
     const page = await newSpecPage({
       components: [EmployeeCreate],
       html: `<employee-create></employee-create>`,
     });
 
     const instance = page.rootInstance as any;
-    window.localStorage.setItem(employeeStorageKey, JSON.stringify([storedProfile]));
-    instance.onEditEmployeeIdChanged('EMP-1');
+    await instance.onEditEmployeeIdChanged(1);
     await page.waitForChanges();
 
     expect(instance.form.position).toEqual('Lekárka');
@@ -101,12 +113,14 @@ describe('employee-create', () => {
     await instance.handleStore();
     await page.waitForChanges();
 
-    const stored = JSON.parse(window.localStorage.getItem(employeeStorageKey) ?? '[]');
-    expect(stored).toHaveLength(1);
-    expect(stored[0].id).toEqual('EMP-1');
-    expect(stored[0].position).toEqual('Primárka');
-    expect(stored[0].phone).toEqual('+421900654321');
-    expect(stored[0].certificates).toEqual(['ALS', 'BLS', 'ATLS']);
-    expect(stored[0].updatedAt).toBeTruthy();
+    expect(updateSpy).toHaveBeenCalledWith({
+      employeeId: 1,
+      employeeProfile: expect.objectContaining({
+        position: 'Primárka',
+        phone: '+421900654321',
+        certificates: ['ALS', 'BLS', 'ATLS'],
+      }),
+    });
+    expect(instance.successMessage).toContain('Anna Nováková');
   });
 });

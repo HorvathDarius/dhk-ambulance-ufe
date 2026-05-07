@@ -1,9 +1,10 @@
 import { newSpecPage } from '@stencil/core/testing';
+import { EmployeeProfilesApi } from '../../../api/employee';
 import { EmployeeList } from '../employee-list';
 
 const profiles = [
   {
-    id: 'EMP-1',
+    id: 1,
     firstName: 'Anna',
     lastName: 'Nováková',
     birthDate: '1988-04-12',
@@ -18,7 +19,7 @@ const profiles = [
     createdAt: '2026-05-07T21:00:00.000Z',
   },
   {
-    id: 'EMP-2',
+    id: 2,
     firstName: 'Peter',
     lastName: 'Kováč',
     birthDate: '1982-09-01',
@@ -34,6 +35,12 @@ const profiles = [
 ];
 
 describe('employee-list', () => {
+  beforeEach(() => {
+    jest.restoreAllMocks();
+    jest.spyOn(EmployeeProfilesApi.prototype, 'listEmployeeProfiles')
+      .mockResolvedValue(profiles as any);
+  });
+
   it('renders stored employees', async () => {
     const page = await newSpecPage({
       components: [EmployeeList],
@@ -94,10 +101,12 @@ describe('employee-list', () => {
     editButton.click();
 
     expect(editSpy).toHaveBeenCalledTimes(1);
-    expect(editSpy.mock.calls[0][0].detail).toEqual('EMP-1');
+    expect(editSpy.mock.calls[0][0].detail).toEqual(1);
   });
 
-  it('emits selected employee id for archiving', async () => {
+  it('archives selected employee through the API and emits its id', async () => {
+    const archiveApiSpy = jest.spyOn(EmployeeProfilesApi.prototype, 'archiveEmployeeProfile')
+      .mockResolvedValue(undefined);
     const page = await newSpecPage({
       components: [EmployeeList],
       html: `<employee-list></employee-list>`,
@@ -110,9 +119,11 @@ describe('employee-list', () => {
     const archiveButton = Array.from(page.root.shadowRoot.querySelectorAll('md-filled-tonal-button'))
       .find(button => button.textContent.includes('Archivovať'));
     archiveButton.click();
+    await page.waitForChanges();
 
+    expect(archiveApiSpy).toHaveBeenCalledWith({ employeeId: 1 });
     expect(archiveSpy).toHaveBeenCalledTimes(1);
-    expect(archiveSpy.mock.calls[0][0].detail).toEqual('EMP-1');
+    expect(archiveSpy.mock.calls[0][0].detail).toEqual(1);
   });
 
   it('renders archived employees with archive status and no edit actions', async () => {

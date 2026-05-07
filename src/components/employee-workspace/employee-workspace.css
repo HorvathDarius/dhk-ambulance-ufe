@@ -1,12 +1,32 @@
 :host {
-  display: block;
-  max-width: 1120px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(360px, 0.75fr);
+  align-items: start;
+  gap: clamp(20px, 3vw, 32px);
+  width: min(100%, 1360px);
   margin: 0 auto;
+  padding: 0;
+}
+
+employee-list,
+employee-create {
+  display: block;
+  min-width: 0;
 }
 
 employee-create {
-  display: block;
-  margin-top: 12px;
-  padding-top: 24px;
-  border-top: 1px solid var(--md-sys-color-outline-variant, #e0e0e0);
+  position: sticky;
+  top: 18px;
+}
+
+@media (max-width: 1080px) {
+  :host {
+    grid-template-columns: 1fr;
+  }
+
+  employee-create {
+    position: static;
+    padding-top: 22px;
+    border-top: 1px solid var(--md-sys-color-outline-variant, #e0e0e0);
+  }
 }

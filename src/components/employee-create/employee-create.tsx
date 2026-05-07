@@ -1,11 +1,10 @@
 import { Component, Event, EventEmitter, Host, Prop, State, Watch, h } from '@stencil/core';
 import {
-  appendEmployeeProfile,
+  Configuration,
   EmployeeProfile,
-  employeeFullName,
-  findEmployeeProfile,
-  updateEmployeeProfile,
-} from '../../utils/employee-store';
+  EmployeeProfilesApi,
+  EmployeeStatus,
+} from '../../api/employee';
 
 interface EmployeeFormState {
   firstName: string;
@@ -48,20 +47,31 @@ const requiredFields: (keyof EmployeeFormState)[] = [
   'certificates',
 ];
 
+const toDateInput = (value: Date | string | undefined): string => {
+  if (!value) return '';
+  const date = value instanceof Date ? value : new Date(value);
+  if (isNaN(date.getTime())) return String(value);
+  return date.toISOString().slice(0, 10);
+};
+
 const profileToForm = (profile: EmployeeProfile): EmployeeFormState => ({
   firstName: profile.firstName,
   lastName: profile.lastName,
-  birthDate: profile.birthDate,
+  birthDate: toDateInput(profile.birthDate),
   email: profile.email ?? '',
   phone: profile.phone ?? '',
   position: profile.position,
   department: profile.department ?? '',
   specialization: profile.specialization,
   qualification: profile.qualification,
-  employmentStartDate: profile.employmentStartDate,
+  employmentStartDate: toDateInput(profile.employmentStartDate),
   certificates: profile.certificates.join('\n'),
   note: profile.note ?? '',
 });
+
+const employeeFullName = (profile: EmployeeProfile): string => `${profile.firstName} ${profile.lastName}`.trim();
+
+const inputDate = (value: string): Date => new Date(`${value}T00:00:00.000Z`);
 
 @Component({
   tag: 'employee-create',
@@ -69,7 +79,8 @@ const profileToForm = (profile: EmployeeProfile): EmployeeFormState => ({
   shadow: true,
 })
 export class EmployeeCreate {
-  @Prop() editEmployeeId: string = '';
+  @Prop() apiBase: string = '';
+  @Prop() editEmployeeId: number = 0;
 
   @State() form: EmployeeFormState = emptyForm();
   @State() touched: Partial<Record<keyof EmployeeFormState, boolean>> = {};
@@ -81,18 +92,24 @@ export class EmployeeCreate {
 
   @Event({ eventName: 'employee-created' }) employeeCreated: EventEmitter<EmployeeProfile>;
   @Event({ eventName: 'employee-updated' }) employeeUpdated: EventEmitter<EmployeeProfile>;
-  @Event({ eventName: 'employee-edit-cancelled' }) employeeEditCancelled: EventEmitter<string>;
+  @Event({ eventName: 'employee-edit-cancelled' }) employeeEditCancelled: EventEmitter<number>;
 
-  componentWillLoad() {
-    this.loadEditProfile(this.editEmployeeId);
+  private api(): EmployeeProfilesApi {
+    return new EmployeeProfilesApi(new Configuration({
+      basePath: this.apiBase || undefined,
+    }));
+  }
+
+  async componentWillLoad() {
+    await this.loadEditProfile(this.editEmployeeId);
   }
 
   @Watch('editEmployeeId')
-  onEditEmployeeIdChanged(employeeId: string) {
-    this.loadEditProfile(employeeId);
+  async onEditEmployeeIdChanged(employeeId: number) {
+    await this.loadEditProfile(employeeId);
   }
 
-  private loadEditProfile(employeeId: string) {
+  private async loadEditProfile(employeeId: number) {
     this.errorMessage = '';
     this.successMessage = '';
     this.touched = {};
@@ -104,18 +121,17 @@ export class EmployeeCreate {
       return;
     }
 
+    this.saving = true;
     try {
-      const profile = findEmployeeProfile(employeeId);
-      if (!profile) {
-        throw new Error('Profil zamestnanca sa nenašiel.');
-      }
-
+      const profile = await this.api().getEmployeeProfile({ employeeId });
       this.editingProfile = profile;
       this.form = profileToForm(profile);
     } catch (e: unknown) {
       this.editingProfile = undefined;
       this.form = emptyForm();
       this.errorMessage = e instanceof Error ? e.message : 'Nepodarilo sa načítať profil zamestnanca.';
+    } finally {
+      this.saving = false;
     }
   }
 
@@ -164,25 +180,22 @@ export class EmployeeCreate {
   }
 
   private buildProfile(): EmployeeProfile {
-    const now = new Date();
     const editing = this.editingProfile;
     return {
-      id: editing?.id ?? `EMP-${now.getTime().toString(36).toUpperCase()}`,
+      id: editing?.id,
       firstName: this.form.firstName.trim(),
       lastName: this.form.lastName.trim(),
-      birthDate: this.form.birthDate,
+      birthDate: inputDate(this.form.birthDate),
       email: this.form.email.trim() || undefined,
       phone: this.form.phone.trim() || undefined,
       position: this.form.position.trim(),
       department: this.form.department.trim() || undefined,
       specialization: this.form.specialization.trim(),
       qualification: this.form.qualification.trim(),
-      employmentStartDate: this.form.employmentStartDate,
+      employmentStartDate: inputDate(this.form.employmentStartDate),
       certificates: this.certificateList(),
       note: this.form.note.trim() || undefined,
-      status: 'active',
-      createdAt: editing?.createdAt ?? now.toISOString(),
-      updatedAt: editing ? now.toISOString() : undefined,
+      status: editing?.status ?? EmployeeStatus.Active,
     };
   }
 
@@ -199,17 +212,24 @@ export class EmployeeCreate {
     try {
       const profile = this.buildProfile();
       if (this.isEditMode()) {
-        updateEmployeeProfile(profile);
-        this.editingProfile = profile;
-        this.successMessage = `Profil ${employeeFullName(profile)} bol aktualizovaný.`;
-        this.employeeUpdated.emit(profile);
+        if (!this.editingProfile?.id) {
+          throw new Error('Profil zamestnanca nemá platný identifikátor.');
+        }
+        const updated = await this.api().updateEmployeeProfile({
+          employeeId: this.editingProfile.id,
+          employeeProfile: profile,
+        });
+        this.editingProfile = updated;
+        this.form = profileToForm(updated);
+        this.successMessage = `Profil ${employeeFullName(updated)} bol aktualizovaný.`;
+        this.employeeUpdated.emit(updated);
       } else {
-        appendEmployeeProfile(profile);
-        this.createdProfile = profile;
+        const created = await this.api().createEmployeeProfile({ employeeProfile: profile });
+        this.createdProfile = created;
         this.form = emptyForm();
         this.touched = {};
-        this.successMessage = `Profil ${employeeFullName(profile)} bol vytvorený.`;
-        this.employeeCreated.emit(profile);
+        this.successMessage = `Profil ${employeeFullName(created)} bol vytvorený.`;
+        this.employeeCreated.emit(created);
       }
     } catch (e: unknown) {
       this.errorMessage = e instanceof Error ? e.message : 'Nepodarilo sa uložiť profil zamestnanca.';
@@ -239,7 +259,7 @@ export class EmployeeCreate {
   };
 
   private cancelEdit = () => {
-    const employeeId = this.editingProfile?.id ?? '';
+    const employeeId = this.editingProfile?.id ?? 0;
     this.editingProfile = undefined;
     this.form = emptyForm();
     this.touched = {};

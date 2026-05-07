@@ -17,6 +17,8 @@
 - **Update:** Ako HR manažér nemocnice chcem aktualizovať údaje zamestnanca pri zmenách (napr. nová pozícia, kontaktné údaje, certifikáty).
 - **Delete:** Ako HR manažér nemocnice chcem archivovať profil zamestnanca pri ukončení pracovného pomeru.
 
+API: `dhk-ambulance-webapi/api/employee.openapi.yaml` · UFE komponenty: `employee-workspace`, `employee-list`, `employee-create` v záložke `Zamestnanci`. Profily sa načítavajú a ukladajú cez backend `/api/employees`, prehľad podporuje vyhľadávanie podľa oddelenia alebo špecializácie, existujúci profil sa dá otvoriť na úpravu a ukončený pracovný pomer sa rieši archiváciou profilu.
+
 #### Priradenie k oddeleniam (implementované)
 - **Create:** Ako vedúci lekár chcem priradiť zamestnanca k ambulancii alebo nemocničnému oddeleniu.
 - **Read:** Ako vedúci lekár chcem zobraziť si aktuálne obsadenie oddelení a históriu priradení zamestnancov.

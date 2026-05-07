@@ -21,6 +21,15 @@
           "supportsES6": "true",
           "withInterfaces": true
         }
+      },
+      "ambulance-employee": {
+        "generatorName": "typescript-fetch",
+        "glob": "api/employee.openapi.yaml",
+        "output": "#{cwd}/src/api/employee",
+        "additionalProperties": {
+          "supportsES6": "true",
+          "withInterfaces": true
+        }
       }
     }
   }

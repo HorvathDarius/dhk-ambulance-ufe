@@ -5,8 +5,8 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { EmployeeProfile } from "./utils/employee-store";
-export { EmployeeProfile } from "./utils/employee-store";
+import { EmployeeProfile } from "./api/employee";
+export { EmployeeProfile } from "./api/employee";
 export namespace Components {
     interface AssignmentApp {
         /**
@@ -35,15 +35,27 @@ export namespace Components {
         /**
           * @default ''
          */
-        "editEmployeeId": string;
+        "apiBase": string;
+        /**
+          * @default 0
+         */
+        "editEmployeeId": number;
     }
     interface EmployeeList {
+        /**
+          * @default ''
+         */
+        "apiBase": string;
         /**
           * @default 0
          */
         "refreshToken": number;
     }
     interface EmployeeWorkspace {
+        /**
+          * @default ''
+         */
+        "apiBase": string;
     }
     interface MainComponent {
     }
@@ -139,7 +151,7 @@ declare global {
     interface HTMLEmployeeCreateElementEventMap {
         "employee-created": EmployeeProfile;
         "employee-updated": EmployeeProfile;
-        "employee-edit-cancelled": string;
+        "employee-edit-cancelled": number;
     }
     interface HTMLEmployeeCreateElement extends Components.EmployeeCreate, HTMLStencilElement {
         addEventListener<K extends keyof HTMLEmployeeCreateElementEventMap>(type: K, listener: (this: HTMLEmployeeCreateElement, ev: EmployeeCreateCustomEvent<HTMLEmployeeCreateElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -156,8 +168,8 @@ declare global {
         new (): HTMLEmployeeCreateElement;
     };
     interface HTMLEmployeeListElementEventMap {
-        "employee-edit-requested": string;
-        "employee-archive-requested": string;
+        "employee-edit-requested": number;
+        "employee-archive-requested": number;
     }
     interface HTMLEmployeeListElement extends Components.EmployeeList, HTMLStencilElement {
         addEventListener<K extends keyof HTMLEmployeeListElementEventMap>(type: K, listener: (this: HTMLEmployeeListElement, ev: EmployeeListCustomEvent<HTMLEmployeeListElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -268,20 +280,32 @@ declare namespace LocalJSX {
         /**
           * @default ''
          */
-        "editEmployeeId"?: string;
+        "apiBase"?: string;
+        /**
+          * @default 0
+         */
+        "editEmployeeId"?: number;
         "onEmployee-created"?: (event: EmployeeCreateCustomEvent<EmployeeProfile>) => void;
-        "onEmployee-edit-cancelled"?: (event: EmployeeCreateCustomEvent<string>) => void;
+        "onEmployee-edit-cancelled"?: (event: EmployeeCreateCustomEvent<number>) => void;
         "onEmployee-updated"?: (event: EmployeeCreateCustomEvent<EmployeeProfile>) => void;
     }
     interface EmployeeList {
-        "onEmployee-archive-requested"?: (event: EmployeeListCustomEvent<string>) => void;
-        "onEmployee-edit-requested"?: (event: EmployeeListCustomEvent<string>) => void;
+        /**
+          * @default ''
+         */
+        "apiBase"?: string;
+        "onEmployee-archive-requested"?: (event: EmployeeListCustomEvent<number>) => void;
+        "onEmployee-edit-requested"?: (event: EmployeeListCustomEvent<number>) => void;
         /**
           * @default 0
          */
         "refreshToken"?: number;
     }
     interface EmployeeWorkspace {
+        /**
+          * @default ''
+         */
+        "apiBase"?: string;
     }
     interface MainComponent {
     }
@@ -323,10 +347,15 @@ declare namespace LocalJSX {
         "apiBase": string;
     }
     interface EmployeeCreateAttributes {
-        "editEmployeeId": string;
+        "apiBase": string;
+        "editEmployeeId": number;
     }
     interface EmployeeListAttributes {
+        "apiBase": string;
         "refreshToken": number;
+    }
+    interface EmployeeWorkspaceAttributes {
+        "apiBase": string;
     }
     interface VykonAppAttributes {
         "basePath": string;
@@ -346,7 +375,7 @@ declare namespace LocalJSX {
         "assignment-list": Omit<AssignmentList, keyof AssignmentListAttributes> & { [K in keyof AssignmentList & keyof AssignmentListAttributes]?: AssignmentList[K] } & { [K in keyof AssignmentList & keyof AssignmentListAttributes as `attr:${K}`]?: AssignmentListAttributes[K] } & { [K in keyof AssignmentList & keyof AssignmentListAttributes as `prop:${K}`]?: AssignmentList[K] };
         "employee-create": Omit<EmployeeCreate, keyof EmployeeCreateAttributes> & { [K in keyof EmployeeCreate & keyof EmployeeCreateAttributes]?: EmployeeCreate[K] } & { [K in keyof EmployeeCreate & keyof EmployeeCreateAttributes as `attr:${K}`]?: EmployeeCreateAttributes[K] } & { [K in keyof EmployeeCreate & keyof EmployeeCreateAttributes as `prop:${K}`]?: EmployeeCreate[K] };
         "employee-list": Omit<EmployeeList, keyof EmployeeListAttributes> & { [K in keyof EmployeeList & keyof EmployeeListAttributes]?: EmployeeList[K] } & { [K in keyof EmployeeList & keyof EmployeeListAttributes as `attr:${K}`]?: EmployeeListAttributes[K] } & { [K in keyof EmployeeList & keyof EmployeeListAttributes as `prop:${K}`]?: EmployeeList[K] };
-        "employee-workspace": EmployeeWorkspace;
+        "employee-workspace": Omit<EmployeeWorkspace, keyof EmployeeWorkspaceAttributes> & { [K in keyof EmployeeWorkspace & keyof EmployeeWorkspaceAttributes]?: EmployeeWorkspace[K] } & { [K in keyof EmployeeWorkspace & keyof EmployeeWorkspaceAttributes as `attr:${K}`]?: EmployeeWorkspaceAttributes[K] } & { [K in keyof EmployeeWorkspace & keyof EmployeeWorkspaceAttributes as `prop:${K}`]?: EmployeeWorkspace[K] };
         "main-component": MainComponent;
         "vykon-app": Omit<VykonApp, keyof VykonAppAttributes> & { [K in keyof VykonApp & keyof VykonAppAttributes]?: VykonApp[K] } & { [K in keyof VykonApp & keyof VykonAppAttributes as `attr:${K}`]?: VykonAppAttributes[K] } & { [K in keyof VykonApp & keyof VykonAppAttributes as `prop:${K}`]?: VykonApp[K] };
         "vykon-editor": Omit<VykonEditor, keyof VykonEditorAttributes> & { [K in keyof VykonEditor & keyof VykonEditorAttributes]?: VykonEditor[K] } & { [K in keyof VykonEditor & keyof VykonEditorAttributes as `attr:${K}`]?: VykonEditorAttributes[K] } & { [K in keyof VykonEditor & keyof VykonEditorAttributes as `prop:${K}`]?: VykonEditor[K] };
