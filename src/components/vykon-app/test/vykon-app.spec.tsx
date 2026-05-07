@@ -2,25 +2,57 @@ import { newSpecPage } from '@stencil/core/testing';
 import { VykonApp } from '../vykon-app';
 
 describe('vykon-app', () => {
-  it('renders editor on /editor/@new', async () => {
+  it('renders editor only on /editor/@new (no tabs, no header)', async () => {
     const page = await newSpecPage({
       url: 'http://localhost/editor/@new',
       components: [VykonApp],
       html: `<vykon-app base-path="/"></vykon-app>`,
     });
     (page.win as any).navigation = new EventTarget();
-    const child = page.root.shadowRoot.firstElementChild;
+    const root = page.root.shadowRoot;
+    const child = root.firstElementChild;
     expect(child.tagName.toLowerCase()).toEqual('vykon-editor');
+    expect(root.querySelector('md-tabs')).toBeNull();
+    expect(root.querySelector('.page-header')).toBeNull();
   });
 
-  it('renders list on /', async () => {
+  it('renders 3 tabs with Performance Records active by default', async () => {
     const page = await newSpecPage({
       url: 'http://localhost/',
       components: [VykonApp],
       html: `<vykon-app base-path="/"></vykon-app>`,
     });
     (page.win as any).navigation = new EventTarget();
-    const child = page.root.shadowRoot.firstElementChild;
-    expect(child.tagName.toLowerCase()).toEqual('vykon-list');
+    const root = page.root.shadowRoot;
+
+    expect(root.querySelector('.page-header h1').textContent).toEqual('DHK Ambulance');
+
+    const tabs = root.querySelectorAll('md-primary-tab');
+    expect(tabs.length).toEqual(3);
+    expect(tabs[0].textContent).toEqual('Task 1');
+    expect(tabs[1].textContent).toEqual('Task 2');
+    expect(tabs[2].textContent).toEqual('Performance Records');
+
+    expect(tabs[0].hasAttribute('active')).toBe(false);
+    expect(tabs[1].hasAttribute('active')).toBe(false);
+    expect(tabs[2].hasAttribute('active')).toBe(true);
+  });
+
+  it('mounts vykon-list inside the Performance Records panel and keeps placeholders for the other tabs', async () => {
+    const page = await newSpecPage({
+      url: 'http://localhost/',
+      components: [VykonApp],
+      html: `<vykon-app base-path="/"></vykon-app>`,
+    });
+    (page.win as any).navigation = new EventTarget();
+    const panels = page.root.shadowRoot.querySelectorAll('section.tab-panel');
+    expect(panels.length).toEqual(3);
+    expect(panels[0].querySelector('.placeholder').textContent).toEqual('Task 1');
+    expect(panels[1].querySelector('.placeholder').textContent).toEqual('Task 2');
+    expect(panels[2].querySelector('vykon-list')).toBeTruthy();
+
+    expect(panels[0].hasAttribute('hidden')).toBe(true);
+    expect(panels[1].hasAttribute('hidden')).toBe(true);
+    expect(panels[2].hasAttribute('hidden')).toBe(false);
   });
 });

@@ -1,29 +1,81 @@
 :host {
   display: block;
   font-family: 'Roboto', sans-serif;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 16px;
+  padding: 24px;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.title-bar {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin: 0 0 24px;
+  padding: 0 0 16px;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant, #e0e0e0);
+}
+
+.title-icon {
+  font-size: 36px;
+  color: var(--md-sys-color-primary, #6750a4);
+  flex: 0 0 auto;
+}
+
+.title-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 auto;
 }
 
 .title {
-  margin: 0 0 16px;
+  margin: 0;
   font-weight: 500;
+  font-size: 1.5rem;
+  letter-spacing: 0.01em;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.6);
 }
 
 .error {
   margin: 0 0 16px;
   padding: 12px 16px;
-  background: #ffebee;
-  color: #b00020;
-  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--md-sys-color-error-container, #fdecea);
+  color: var(--md-sys-color-on-error-container, #b00020);
+  border-radius: 8px;
   font-size: 0.875rem;
+}
+
+.form-section {
+  margin: 0 0 24px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--md-sys-color-primary, #6750a4);
+}
+
+.section-title md-icon {
+  font-size: 18px;
 }
 
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 14px;
 }
 
 .grid md-outlined-text-field {
@@ -39,7 +91,9 @@
   flex-direction: row;
   align-items: center;
   gap: 8px;
-  margin-top: 16px;
+  margin-top: 8px;
+  padding-top: 20px;
+  border-top: 1px solid var(--md-sys-color-outline-variant, #e0e0e0);
 }
 
 .stretch-fill {
@@ -47,6 +101,18 @@
 }
 
 @media (max-width: 600px) {
+  :host {
+    padding: 16px;
+  }
+  .title-bar {
+    gap: 12px;
+  }
+  .title-icon {
+    font-size: 28px;
+  }
+  .title {
+    font-size: 1.25rem;
+  }
   .grid {
     grid-template-columns: 1fr;
   }

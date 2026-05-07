@@ -78,7 +78,11 @@ export class VykonList {
           <md-list>
             {this.records.map((rec, idx) => (
               <Fragment>
-                <md-list-item key={rec.id}>
+                <md-list-item
+                  key={rec.id}
+                  type="button"
+                  onClick={() => this.entryClicked.emit(String(rec.id))}
+                >
                   <div slot="headline">{rec.employeeName}</div>
                   <div slot="supporting-text">
                     {this.formatDate(rec.date)} · {rec.hoursWorked} h ·
@@ -86,16 +90,14 @@ export class VykonList {
                     {' '}operácie: {rec.operationCount} ·
                     {' '}služby: {rec.shiftCount}
                   </div>
-                  <div slot="end" class="actions">
-                    <md-icon-button
-                      aria-label="Upraviť záznam"
-                      onClick={() => this.entryClicked.emit(String(rec.id))}
-                    >
-                      <md-icon>edit</md-icon>
-                    </md-icon-button>
+                  <div
+                    slot="end"
+                    class="actions"
+                    onClick={(e: Event) => e.stopPropagation()}
+                  >
                     <md-icon-button
                       aria-label="Vymazať záznam"
-                      onClick={() => this.handleDelete(rec.id!)}
+                      onClick={(e: Event) => { e.stopPropagation(); this.handleDelete(rec.id!); }}
                     >
                       <md-icon>delete</md-icon>
                     </md-icon-button>
