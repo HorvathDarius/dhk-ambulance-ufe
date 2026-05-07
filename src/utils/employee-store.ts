@@ -12,9 +12,10 @@ export interface EmployeeProfile {
   employmentStartDate: string;
   certificates: string[];
   note?: string;
-  status: 'active';
+  status: 'active' | 'archived';
   createdAt: string;
   updatedAt?: string;
+  archivedAt?: string;
 }
 
 export const employeeStorageKey = 'dhk-ambulance-employees';
@@ -55,4 +56,24 @@ export const updateEmployeeProfile = (profile: EmployeeProfile) => {
   const updated = [...profiles];
   updated[index] = profile;
   storeEmployeeProfiles(updated);
+};
+
+export const archiveEmployeeProfile = (employeeId: string): EmployeeProfile => {
+  const profiles = loadEmployeeProfiles();
+  const index = profiles.findIndex(existing => existing.id === employeeId);
+  if (index === -1) {
+    throw new Error('Profil zamestnanca sa nenašiel.');
+  }
+
+  const now = new Date().toISOString();
+  const archived: EmployeeProfile = {
+    ...profiles[index],
+    status: 'archived',
+    archivedAt: now,
+    updatedAt: now,
+  };
+  const updated = [...profiles];
+  updated[index] = archived;
+  storeEmployeeProfiles(updated);
+  return archived;
 };

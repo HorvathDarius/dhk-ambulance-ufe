@@ -1,4 +1,5 @@
 import { Component, Host, State, h } from '@stencil/core';
+import { archiveEmployeeProfile } from '../../utils/employee-store';
 
 @Component({
   tag: 'employee-workspace',
@@ -26,18 +27,27 @@ export class EmployeeWorkspace {
     this.editEmployeeId = '';
   };
 
+  private handleArchiveRequested = (event: CustomEvent<string>) => {
+    archiveEmployeeProfile(event.detail);
+    if (this.editEmployeeId === event.detail) {
+      this.editEmployeeId = '';
+    }
+    this.refreshToken += 1;
+  };
+
   render() {
     return (
       <Host>
         <employee-list
-          refresh-token={this.refreshToken}
-          onemployee-edit-requested={this.handleEditRequested}
+          refreshToken={this.refreshToken}
+          onEmployee-edit-requested={this.handleEditRequested}
+          onEmployee-archive-requested={this.handleArchiveRequested}
         ></employee-list>
         <employee-create
-          edit-employee-id={this.editEmployeeId}
-          onemployee-created={this.handleEmployeeCreated}
-          onemployee-updated={this.handleEmployeeUpdated}
-          onemployee-edit-cancelled={this.handleEditCancelled}
+          editEmployeeId={this.editEmployeeId}
+          onEmployee-created={this.handleEmployeeCreated}
+          onEmployee-updated={this.handleEmployeeUpdated}
+          onEmployee-edit-cancelled={this.handleEditCancelled}
         ></employee-create>
       </Host>
     );

@@ -157,6 +157,7 @@ declare global {
     };
     interface HTMLEmployeeListElementEventMap {
         "employee-edit-requested": string;
+        "employee-archive-requested": string;
     }
     interface HTMLEmployeeListElement extends Components.EmployeeList, HTMLStencilElement {
         addEventListener<K extends keyof HTMLEmployeeListElementEventMap>(type: K, listener: (this: HTMLEmployeeListElement, ev: EmployeeListCustomEvent<HTMLEmployeeListElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -273,6 +274,7 @@ declare namespace LocalJSX {
         "onEmployee-updated"?: (event: EmployeeCreateCustomEvent<EmployeeProfile>) => void;
     }
     interface EmployeeList {
+        "onEmployee-archive-requested"?: (event: EmployeeListCustomEvent<string>) => void;
         "onEmployee-edit-requested"?: (event: EmployeeListCustomEvent<string>) => void;
         /**
           * @default 0

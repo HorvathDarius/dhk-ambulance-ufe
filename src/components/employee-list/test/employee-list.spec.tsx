@@ -96,4 +96,43 @@ describe('employee-list', () => {
     expect(editSpy).toHaveBeenCalledTimes(1);
     expect(editSpy.mock.calls[0][0].detail).toEqual('EMP-1');
   });
+
+  it('emits selected employee id for archiving', async () => {
+    const page = await newSpecPage({
+      components: [EmployeeList],
+      html: `<employee-list></employee-list>`,
+    });
+    const archiveSpy = jest.fn();
+    page.root.addEventListener('employee-archive-requested', archiveSpy);
+    page.rootInstance.employees = profiles;
+    await page.waitForChanges();
+
+    const archiveButton = Array.from(page.root.shadowRoot.querySelectorAll('md-filled-tonal-button'))
+      .find(button => button.textContent.includes('Archivovať'));
+    archiveButton.click();
+
+    expect(archiveSpy).toHaveBeenCalledTimes(1);
+    expect(archiveSpy.mock.calls[0][0].detail).toEqual('EMP-1');
+  });
+
+  it('renders archived employees with archive status and no edit actions', async () => {
+    const page = await newSpecPage({
+      components: [EmployeeList],
+      html: `<employee-list></employee-list>`,
+    });
+    page.rootInstance.employees = [
+      {
+        ...profiles[0],
+        status: 'archived',
+        archivedAt: '2026-06-30T10:00:00.000Z',
+      },
+    ];
+    await page.waitForChanges();
+
+    expect(page.root.shadowRoot.querySelector('.employee-card.archived')).toBeTruthy();
+    expect(page.root.shadowRoot.textContent).toContain('Archivovaný');
+    expect(page.root.shadowRoot.textContent).toContain('Archivácia');
+    const card = page.root.shadowRoot.querySelector('.employee-card.archived');
+    expect(card.querySelector('.card-actions')).toBeNull();
+  });
 });

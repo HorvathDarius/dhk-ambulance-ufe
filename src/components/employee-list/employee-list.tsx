@@ -26,6 +26,7 @@ export class EmployeeList {
   @State() errorMessage: string = '';
 
   @Event({ eventName: 'employee-edit-requested' }) employeeEditRequested: EventEmitter<string>;
+  @Event({ eventName: 'employee-archive-requested' }) employeeArchiveRequested: EventEmitter<string>;
 
   private storageListener = () => this.loadEmployees();
 
@@ -86,6 +87,14 @@ export class EmployeeList {
     return this.employees.filter(employee => this.matches(employee));
   }
 
+  private activeEmployees(): EmployeeProfile[] {
+    return this.employees.filter(employee => employee.status !== 'archived');
+  }
+
+  private archivedEmployees(): EmployeeProfile[] {
+    return this.employees.filter(employee => employee.status === 'archived');
+  }
+
   private departments(): string[] {
     return Array.from(new Set(this.employees.map(employee => employee.department?.trim()).filter(Boolean) as string[]))
       .sort((a, b) => a.localeCompare(b, 'sk'));
@@ -118,6 +127,8 @@ export class EmployeeList {
     const filtered = this.filteredEmployees();
     const departments = this.departments();
     const specializations = this.specializations();
+    const activeCount = this.activeEmployees().length;
+    const archivedCount = this.archivedEmployees().length;
 
     return (
       <Host>
@@ -132,16 +143,16 @@ export class EmployeeList {
           </div>
           <div class="metric-strip" aria-label="Súhrn zamestnancov">
             <div>
-              <span>Profily</span>
-              <strong>{this.employees.length}</strong>
+              <span>Aktívne</span>
+              <strong>{activeCount}</strong>
             </div>
             <div>
               <span>Oddelenia</span>
               <strong>{departments.length}</strong>
             </div>
             <div>
-              <span>Špecializácie</span>
-              <strong>{specializations.length}</strong>
+              <span>Archív</span>
+              <strong>{archivedCount}</strong>
             </div>
           </div>
         </section>
@@ -185,14 +196,19 @@ export class EmployeeList {
           </section>
         ) : (
           <div class="employee-grid">
-            {filtered.map(employee => (
-              <article class="employee-card" key={employee.id}>
+            {filtered.map(employee => {
+              const archived = employee.status === 'archived';
+              return (
+              <article class={archived ? 'employee-card archived' : 'employee-card'} key={employee.id}>
                 <div class="identity">
                   <div class="avatar">{employee.firstName.charAt(0)}{employee.lastName.charAt(0)}</div>
                   <div>
                     <h3>{employeeFullName(employee)}</h3>
                     <p>{employee.position}</p>
                   </div>
+                  <span class={archived ? 'status-badge archived' : 'status-badge'}>
+                    {archived ? 'Archivovaný' : 'Aktívny'}
+                  </span>
                 </div>
 
                 <div class="detail-row">
@@ -211,6 +227,12 @@ export class EmployeeList {
                   <span>Nástup</span>
                   <strong>{this.formatDate(employee.employmentStartDate)}</strong>
                 </div>
+                {archived && employee.archivedAt ? (
+                  <div class="detail-row archive-row">
+                    <span>Archivácia</span>
+                    <strong>{this.formatDate(employee.archivedAt)}</strong>
+                  </div>
+                ) : null}
 
                 <div class="certificate-list" aria-label={`Certifikáty: ${employeeFullName(employee)}`}>
                   {employee.certificates.slice(0, 3).map(cert => <span>{cert}</span>)}
@@ -220,13 +242,21 @@ export class EmployeeList {
                 <footer>
                   <span>{employee.id}</span>
                   {employee.email ? <a href={`mailto:${employee.email}`}>{employee.email}</a> : null}
-                  <md-outlined-button onClick={() => this.employeeEditRequested.emit(employee.id)}>
-                    <md-icon slot="icon">edit</md-icon>
-                    Upraviť
-                  </md-outlined-button>
+                  {!archived ? (
+                    <span class="card-actions">
+                      <md-outlined-button onClick={() => this.employeeEditRequested.emit(employee.id)}>
+                        <md-icon slot="icon">edit</md-icon>
+                        Upraviť
+                      </md-outlined-button>
+                      <md-filled-tonal-button onClick={() => this.employeeArchiveRequested.emit(employee.id)}>
+                        <md-icon slot="icon">archive</md-icon>
+                        Archivovať
+                      </md-filled-tonal-button>
+                    </span>
+                  ) : null}
                 </footer>
               </article>
-            ))}
+            );})}
           </div>
         )}
       </Host>

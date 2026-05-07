@@ -159,12 +159,35 @@ h2 {
   box-shadow: 0 12px 30px rgba(44, 62, 80, 0.08);
 }
 
+.employee-card.archived {
+  background: #fbfaf7;
+  border-color: #e2d8c8;
+  box-shadow: none;
+}
+
 .identity {
   display: flex;
   align-items: center;
   gap: 12px;
   padding-bottom: 10px;
   border-bottom: 1px solid #edf2f0;
+}
+
+.status-badge {
+  margin-left: auto;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #e8f5ef;
+  color: #145c4a;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.status-badge.archived {
+  background: #f1e7d7;
+  color: #745021;
 }
 
 .avatar {
@@ -210,6 +233,10 @@ h2 {
   font-weight: 500;
 }
 
+.archive-row strong {
+  color: #745021;
+}
+
 .certificate-list {
   display: flex;
   flex-wrap: wrap;
@@ -238,7 +265,10 @@ footer {
   font-size: 0.78rem;
 }
 
-footer md-outlined-button {
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-left: auto;
 }
 
